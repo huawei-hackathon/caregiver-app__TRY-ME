@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "app-boilerplate",
-    "slug": "app-boilerplate",
+    "name": "caregiver-app",
+    "slug": "caregiver-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,11 +13,10 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.gtxn.caregiver-app"
     },
     "android": {
       "adaptiveIcon": {
@@ -27,6 +26,7 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": ["react-native-health"]
   }
 }
