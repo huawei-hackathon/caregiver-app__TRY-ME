@@ -3,17 +3,18 @@ import { Animated } from 'react-native';
 import { Heading, Text, Pressable, Box, Center, HStack, VStack } from 'native-base'
 
 import ChartComponent from './Chart';
+import { dateToDaysAndTime, dateToStr, dateToTime } from '../../../../utils';
 
 const TabBar = ({ nav, position, setPos }) => {
     return (
-        <Box flexDirection="row" bg='gray.200' h='30px' borderRadius={10}>
+        <Box flexDirection="row" bg='gray.200' h='30px' borderRadius={5}>
             {
                 nav.map((name, i) => {
                     return (
                         <Box
                             flex={1}
                             bg={(position === i) ? 'white' : 'gray.200'}
-                            borderRadius={10}
+                            borderRadius={5}
                         >
                             <Box
                                 flex={1}
@@ -34,7 +35,10 @@ const TabBar = ({ nav, position, setPos }) => {
                                         console.log('press', i)
                                         setPos(i)
                                     }}>
-                                    <Text fontSize='2xs'>{name}</Text>
+                                    <Text
+                                        fontSize='2xs'>
+                                        {name}
+                                    </Text>
                                 </Pressable>
                             </Box>
                         </Box>
@@ -63,7 +67,7 @@ const getData = ({ type }) => {
 
         return {
             data,
-            tickValues: [0, 6, 12, 18, 24],
+            tickValues: [0, 6, 12, 18, 23],
             theme: {
                 labels: {
                     formatter: (v) => v.toFixed(2)
@@ -145,6 +149,9 @@ let HeartRatePage = () => {
     const [averageBpm, setAverageBpm] = useState(-1)
     const [theme, setTheme] = useState({})
 
+    const [lastUpdate, setLastUpdate] = useState('')
+    const [lastUpdateVal, setLastUpdateVal] = useState('')
+
     useEffect(() => {
         let dataObj = getData({ type: pageMap[page] })
 
@@ -153,12 +160,16 @@ let HeartRatePage = () => {
         setTheme(dataObj['theme'])
         setAverageBpm(Math.round(dataObj['average']))
 
+        const d = new Date()
+        setLastUpdate(dateToTime(d))
+        setLastUpdateVal(54)
+
     }, [page])
 
     return (
         <Center>
             <VStack mx={5} my={5}>
-                <Box >
+                <Box mx={3}>
                     <TabBar
                         nav={navObjs}
                         position={page}
@@ -166,7 +177,6 @@ let HeartRatePage = () => {
                     />
                 </Box>
 
-                {/* Steo count  */}
                 <VStack pl={3}>
                     <Text bold pt={3} color='gray.400'>AVERAGE</Text>
                     <HStack alignItems='center'>
@@ -180,6 +190,16 @@ let HeartRatePage = () => {
                     chartData={chartData}
                     tickValues={tickValues}
                     theme={theme} />
+
+                <Box m={5} p={4} bg="gray.200" borderRadius={10}>
+                    <HStack justifyContent='space-between'>
+                        <Text>Latest update: {lastUpdate}</Text>
+                        <Text>
+                            <Text bold>{lastUpdateVal} </Text>
+                            BPM
+                        </Text>
+                    </HStack>
+                </Box>
             </VStack>
         </Center >
     )

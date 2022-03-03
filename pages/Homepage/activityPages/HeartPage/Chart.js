@@ -10,9 +10,9 @@ const ChartComponent = ({ chartData, tickValues, theme }) => {
 
     return (
         <Chart
-            style={{ height: 200, width: 400 }}
+            style={{ height: 300, width: 400 }}
             data={chartData}
-            padding={{ left: 40, bottom: 20, right: 20, top: 20 }}
+            padding={{ left: 40, bottom: 20, right: 40, top: 20 }}
             xDomain={{ min: 1, max: xMax }}
             yDomain={{ min: 30, max: 200 }}
         >
