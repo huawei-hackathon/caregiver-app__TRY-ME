@@ -30,7 +30,7 @@ let HomePageContent = ({ navigation }) => {
             <ScrollView>
                 <VStack w="100%" border height='100%' paddingX={3} paddingY={3} space={3} alignItems='center' justifyContent='flex-start'>
                     <Heading>Today's Update</Heading>
-                    <Text color='gray.600'>{dateNow}</Text>
+                    {/* <Text color='gray.600'>{dateNow}</Text> */}
 
                     <Pressable w="100%" rounded='md' shadow={3}
                         onPress={() => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Center, Text, Box, HStack, Stack, Heading, Badge } from 'native-base'
+import { Center, Text, Box, HStack, Stack, Heading, Badge, VStack } from 'native-base'
 import { VictoryPie, VictoryTheme } from "victory-native";
 
 
@@ -32,12 +32,18 @@ const SleepTime = () => {
                 </Stack>
 
                 <Center h={90} w='100%'>
-                    <HStack alignItems="center" space={1}>
-                        <Text bold fontSize='xl'>{sleepHours}</Text>
-                        <Text>hr</Text>
-                        <Text bold fontSize='xl'>{sleepMins}</Text>
-                        <Text>min</Text>
-                    </HStack>
+                    <VStack>
+                        <HStack alignItems="center" space={1}>
+                            <Text bold fontSize='2xl'>{sleepHours}</Text>
+                            <Text fontSize="lg">hr</Text>
+                            <Text bold fontSize='2xl'>{sleepMins}</Text>
+                            <Text fontSize="lg">min</Text>
+                        </HStack>
+                        <Text
+                            fontSize="xs" color="gray.500">
+                            In bed
+                        </Text>
+                    </VStack>
                 </Center>
             </Stack>
             <Box>

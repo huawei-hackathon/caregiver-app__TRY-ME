@@ -1,35 +1,36 @@
 import React, { useState, useEffect } from 'react';
 import { Text, Box, Center, HStack, AspectRatio, Image, Stack, Heading, Badge } from 'native-base'
-import { Chart, Line, Area, HorizontalAxis, VerticalAxis, Tooltip } from 'react-native-responsive-linechart'
 
 import { getHAgo, dateToDaysAndTime } from '../../../utils';
-import { TouchableNativeFeedbackComponent } from 'react-native';
 
 const ContentList = ({ contList }) => {
     const allCont = []
     contList.forEach(({ type, name }) => {
-        let typeCol = {
-            'Veg': 'green.100',
-            'Carb': 'amber.100',
-            'Meat': 'red.100'
-        }
 
         allCont.push(
             <>
-                <HStack bg={typeCol[type]}>
+                <HStack px={3} py={0.5} bg="gray.100" borderRadius={5}
+                    style={{
+                        borderColor: 'lightgray',
+                        borderWidth: '0.5px',
+                        borderStyle: 'solid'
+                    }}>
                     <Box width="60%">
-                        <Text fontSize='sm'>{name}</Text>
+                        <Text bold fontSize='sm'>{name}</Text>
                     </Box>
                     <Box flex={1} justifyContent='center'>
-                        <Text fontSize='2xs' textAlign='right'>{type}</Text>
+                        <Text
+                            fontSize='xs'
+                            textAlign='right'
+                            italic
+                            color="gray.500">{type}</Text>
                     </Box>
                 </HStack>
             </>
         )
     });
     return (
-        <Box p={2} w="170" h="150" border>
-            <Text fontSize='md' borderWidth={0.5}>Contents: </Text>
+        <Box p={2} w="170" h="160" justifyContent="space-around">
             {allCont}
         </Box>
     )
@@ -97,24 +98,25 @@ const FoodCard = () => {
                     </Heading>
 
                     <HStack space={1}>
-                        <Text fontSize='md' color="gray.600" bold>
-                            {dateToDaysAndTime(lastMealTime)}
-                        </Text>
 
-                        {/* {
+                        {
                             (lastMealTime) ?
-                                <Badge colorScheme={badgeColor}></Badge>
+                                <Text fontSize='md' color="gray.600" bold>
+                                    {dateToDaysAndTime(lastMealTime)}
+                                </Text>
+                                // <Badge colorScheme={badgeColor}></Badge>
                                 : <></>
-                        } */}
+                        }
                     </HStack>
 
                     <HStack width="100%" justifyContent='space-between'>
-                        <Box shadow={2} w="160" h="160">
+                        <Box shadow={2} w="160" h="160" justifyContent="center">
                             <Image source={{
                                 uri: foodImgUri
                             }}
                                 alt="Alternate Text"
-                                size="xl"
+                                w="140"
+                                h="140"
                                 borderRadius={20}
                             />
                         </Box>

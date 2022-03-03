@@ -12,7 +12,6 @@ const StepsCard = () => {
         setStepGoal(10000)
         setTimeout(() => {
             setStepCount(4000)
-
         }, 100)
     }, [])
 
@@ -22,13 +21,14 @@ const StepsCard = () => {
         // Set healthy step count or unhealthy step count
         if ((stepCount < stepGoal / 24 * new Date().getHours())) {
             if ((stepCount + 1000 >= stepGoal / 24 * new Date().getHours())) {
-                setBadgeColor('warning')
+
+                setBadgeColor("#F8E948") // in progress
                 return
             }
 
-            setBadgeColor('danger')
+            setBadgeColor('#F04F4F') // danger
         } else {
-            setBadgeColor('success')
+            setBadgeColor('lightgreen') // complete
         }
     }, [stepCount])
 
@@ -57,6 +57,17 @@ const StepsCard = () => {
 
                 <HStack my={2} alignItems="center" space={4} justifyContent="space-between">
                     <Center flex={1}>
+                        <Text
+                            style={{
+                                position: 'absolute',
+                                top: -20,
+                                right: -10,
+                            }}
+                            fontSize='xs'
+                            color='gray.500'
+                        >
+                            /{stepGoal}
+                        </Text>
                         <VictoryBar
                             width={150}
                             height={30}
@@ -69,7 +80,7 @@ const StepsCard = () => {
                             data={[{ x: 1, y: stepCount }]}
                             style={{
                                 data: {
-                                    fill: "lightgreen",
+                                    fill: badgeColor,
                                 },
                                 parent: {
                                     backgroundColor: 'lightgray',
@@ -77,9 +88,8 @@ const StepsCard = () => {
                             }}
                             domain={{ x: [0, 1], y: [0, stepGoal] }}
                             animate={{
-                                duration: 2000,
                                 onEnter: {
-                                    duration: 200,
+                                    duration: 50,
                                     easing: 'exp'
                                 }
                             }}

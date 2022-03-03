@@ -43,7 +43,18 @@ const HeartCard = () => {
                     <Heading size="md">
                         Heart Rate❤️
                     </Heading>
-                    <Badge colorScheme={badgeColour} width='65px'>{`${heartRate}bpm`}</Badge>
+
+                    <HStack alignItems="center" space={1} mt={-1}>
+                        <Text
+                            fontSize='lg'
+                            bold>
+                            {`${heartRate}`}
+                        </Text>
+                        <Text>
+                            bpm
+                        </Text>
+                    </HStack>
+                    {/* <Badge colorScheme={badgeColour} width='65px'>{`${heartRate}bpm`}</Badge> */}
                 </Stack>
             </Stack>
             <Box mt={-4}>
