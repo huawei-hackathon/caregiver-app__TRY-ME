@@ -1,6 +1,5 @@
 import { valPw, valUsername } from "./loginhelper"
-import { dateToStr, dateToDaysAndTime, getHAgo } from "./dateManipulation"
-import { getHealthkitData } from './getHealthkitData'
+import { dateToStr, dateToDaysAndTime, getHAgo, dateToTime } from "./dateManipulation"
 
 export {
     valPw,
@@ -8,5 +7,5 @@ export {
     dateToStr,
     dateToDaysAndTime,
     getHAgo,
-    getHealthkitData
+    dateToTime
 }

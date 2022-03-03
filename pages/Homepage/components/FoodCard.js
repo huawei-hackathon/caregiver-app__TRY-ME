@@ -93,18 +93,19 @@ const FoodCard = () => {
             <Stack p="4" space={3}>
                 <Stack space={2}>
                     <Heading size="md">
-                        Meal
+                        Meal🥗
                     </Heading>
 
                     <HStack space={1}>
-                        <Text>
-                            Last meal taken:
+                        <Text fontSize='md' color="gray.600" bold>
+                            {dateToDaysAndTime(lastMealTime)}
                         </Text>
-                        {
+
+                        {/* {
                             (lastMealTime) ?
-                                <Badge colorScheme={badgeColor}>{dateToDaysAndTime(lastMealTime)}</Badge>
+                                <Badge colorScheme={badgeColor}></Badge>
                                 : <></>
-                        }
+                        } */}
                     </HStack>
 
                     <HStack width="100%" justifyContent='space-between'>

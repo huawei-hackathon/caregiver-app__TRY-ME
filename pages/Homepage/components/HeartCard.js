@@ -41,7 +41,7 @@ const HeartCard = () => {
             <Stack p="4" space={3}>
                 <Stack space={2}>
                     <Heading size="md">
-                        Heart Rate
+                        Heart Rate❤️
                     </Heading>
                     <Badge colorScheme={badgeColour} width='65px'>{`${heartRate}bpm`}</Badge>
                 </Stack>

@@ -21,6 +21,11 @@ module.exports.dateToDaysAndTime = (d) => {
     }
 }
 
+module.exports.dateToTime = (d) => {
+    return `${d.getHours()}:${toTwoPlace(d.getMinutes())}`
+}
+
+
 module.exports.getHAgo = (d) => {
     const hAgo = Math.round((new Date().getTime() - d.getTime()) / (60 * 60 * 1000))
     return hAgo

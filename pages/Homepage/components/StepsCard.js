@@ -45,9 +45,14 @@ const StepsCard = () => {
             <Stack p="4" space={3} height="100%" justifyContent='center'>
                 <Stack space={2}>
                     <Heading size="md" >
-                        Step count
+                        Step count👣
                     </Heading>
-                    <Badge colorScheme={badgeColor} width='100px'>{`${stepCount} steps`}</Badge>
+                    <HStack alignItems="center" space={1}>
+                        <Text bold fontSize="lg">{`${stepCount}`}</Text>
+                        <Text>steps</Text>
+                    </HStack>
+
+                    {/* <Badge colorScheme={badgeColor} width='100px'></Badge> */}
                 </Stack>
 
                 <HStack my={2} alignItems="center" space={4} justifyContent="space-between">
@@ -83,7 +88,7 @@ const StepsCard = () => {
                     </Center>
                 </HStack>
             </Stack>
-        </Box>
+        </Box >
     )
 };
 
