@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Badge, Center, Text, Box, HStack, Stack, Heading } from 'native-base'
-import { VictoryBar } from 'victory-native';
+import { VictoryPie, VictoryTheme } from 'victory-native';
 
 
 const StepsCard = () => {
@@ -22,13 +22,14 @@ const StepsCard = () => {
         // Set healthy step count or unhealthy step count
         if ((stepCount < stepGoal / 24 * new Date().getHours())) {
             if ((stepCount + 1000 >= stepGoal / 24 * new Date().getHours())) {
-                setBadgeColor('warning')
+                       
+                setBadgeColor("#F8E948") // in progress
                 return
             }
 
-            setBadgeColor('danger')
+            setBadgeColor('#F04F4F') // danger
         } else {
-            setBadgeColor('success')
+            setBadgeColor('lightgreen') // complete
         }
     }, [stepCount])
 
@@ -42,7 +43,34 @@ const StepsCard = () => {
         }} _light={{
             backgroundColor: "gray.50"
         }}>
-            <Stack p="4" space={3} height="100%" justifyContent='center'>
+            <Stack p="4" height="100%" justifyContent='space-between'>
+                <Stack>
+                    <Heading size="md">
+                        Steps Count
+                    </Heading>
+                </Stack>
+
+                <Center h="90%" w='100%'>
+                    <Text fontSize='md' mt={45} position='absolute' bold>
+                        {stepCount}
+                    </Text>
+                    <VictoryPie
+                        innerRadius={35}
+                        radius={55}
+                        colorScale={[badgeColor, 'lightgray']}
+                        theme={VictoryTheme.material}
+                        animate={{
+                            duration: 4000,
+                            onEnter: {
+                                duration: 4000,
+                                easing: 'exp'
+                            }
+                        }}
+                        data={[stepCount, stepGoal - stepCount]}
+                        labels={[]} />
+                </Center>
+            </Stack>
+            {/* <Stack p="4" space={3} height="100%" justifyContent='space-between '>
                 <Stack space={2}>
                     <Heading size="md" >
                         Step count
@@ -82,7 +110,7 @@ const StepsCard = () => {
                         />
                     </Center>
                 </HStack>
-            </Stack>
+            </Stack> */}
         </Box>
     )
 };

@@ -8,7 +8,7 @@ const BloodO2Card = () => {
     const [stepGoal, setStepGoal] = useState(-1)
 
     useEffect(() => {
-        setBloodO2Count(98)
+        setBloodO2Count(95)
         setStepGoal(10000)
     }, [])
 
@@ -22,28 +22,26 @@ const BloodO2Card = () => {
         }} _light={{
             backgroundColor: "gray.50"
         }}>
-            <Stack p="4" height="100%" justifyContent='center'>
-                <Stack space={2}>
+            <Stack p="4" height="100%" justifyContent='space-between'>
+                <Stack>
                     <Heading size="md">
                         Blood Oxygen
                     </Heading>
                 </Stack>
 
-                <Center h={90} w='100%'>
-                    <Text fontSize='sm' mt={45} position='absolute'>
+                <Center h="90%" w='100%'>
+                    <Text fontSize='md' mt={45} position='absolute' bold>
                         {bloodO2Count}%
                     </Text>
                     <VictoryPie
-                        width={90}
-                        height={90}
-                        innerRadius={25}
-                        radius={40}
+                        innerRadius={35}
+                        radius={55}
                         colorScale={['lightgreen', 'lightgray']}
                         theme={VictoryTheme.material}
                         animate={{
-                            duration: 2000,
+                            duration: 4000,
                             onEnter: {
-                                duration: 200,
+                                duration: 4000,
                                 easing: 'exp'
                             }
                         }}

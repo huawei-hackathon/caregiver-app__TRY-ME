@@ -26,9 +26,10 @@ let HomePageContent = ({ navigation }) => {
 
     return (
         <Center>
-            <VStack w="100%" border height='100%' paddingX={5} paddingY={3} space={3} alignItems='center' justifyContent='flex-start'>
-                <Heading>Today's Update</Heading>
-                <Text color='gray.600'>{dateNow}</Text>
+            <VStack w="100%" border height='100%' paddingX={5} paddingY={3} space={3} justifyContent='flex-start'>
+                <Heading size='2xl' textAlign='left'>Today's Update</Heading>
+                
+                {/* <Text color='gray.600'>{dateNow}</Text> */}
 
 
                 <Pressable w="100%" rounded='md' shadow={3}
@@ -39,16 +40,16 @@ let HomePageContent = ({ navigation }) => {
                     <HeartCard />
                 </Pressable>
 
-                <HStack width="100%" justifyContent='space-between' height='150px'>
-                    <Center w='190' rounded="md" shadow={3} height='100%'>
+                <HStack width="100%" justifyContent='space-between' height='25%'>
+                    <Center w='48%' rounded="md" shadow={3} height='100%'>
                         <StepsCard />
                     </Center>
-                    <Center w='190' rounded="md" shadow={3} height='100%'>
+                    <Center w='48%' rounded="md" shadow={3} height='100%'>
                         <BloodO2Card />
                     </Center>
                 </HStack>
 
-                <Center w='100%' rounded='md'>
+                <Center w='100%' rounded='md' shadow={3}>
                     <FoodCard />
                 </Center>
             </VStack>
