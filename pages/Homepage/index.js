@@ -11,6 +11,8 @@ import FoodCard from './components/FoodCard';
 // Pages
 import HeartRatePage from './activityPages/HeartPage';
 import StepcountPage from './activityPages/StepcountPage';
+import SleepPage from './activityPages/SleepPage';
+import MealPage from './activityPages/MealPage';
 
 // Utils
 import { dateToStr } from '../../utils'
@@ -52,14 +54,25 @@ let HomePageContent = ({ navigation }) => {
                             <StepsCard />
                         </Pressable>
 
-                        <Center w='180' rounded="md" shadow={3} height='100%'>
+                        <Pressable
+                            w='180'
+                            rounded="md"
+                            shadow={3}
+                            height='100%'
+                            onPress={() => {
+                                navigation.navigate('Sleep')
+                            }}>
+
                             <SleepTime />
-                        </Center>
+                        </Pressable>
+
                     </HStack>
 
-                    <Center w='100%' rounded='md'>
+                    <Pressable
+                        w='100%' rounded='md'
+                        onPress={() => { navigation.navigate('Meals') }}>
                         <FoodCard />
-                    </Center>
+                    </Pressable>
                 </VStack>
             </ScrollView>
         </Center >
@@ -72,6 +85,8 @@ const HomePage = () => {
             <HomeStack.Screen name="Home" component={HomePageContent} />
             <HomeStack.Screen name="Heart Rate" component={HeartRatePage} />
             <HomeStack.Screen name="Step Count" component={StepcountPage} />
+            <HomeStack.Screen name="Sleep" component={SleepPage} />
+            <HomeStack.Screen name="Meals" component={MealPage} />
         </HomeStack.Navigator>
     )
 }

@@ -161,7 +161,7 @@ let HeartRatePage = () => {
         setAverageBpm(Math.round(dataObj['average']))
 
         const d = new Date()
-        setLastUpdate(dateToTime(d))
+        setLastUpdate(dateToDaysAndTime(d))
         setLastUpdateVal(54)
 
     }, [page])
@@ -193,7 +193,7 @@ let HeartRatePage = () => {
 
                 <Box m={5} p={4} bg="gray.200" borderRadius={10}>
                     <HStack justifyContent='space-between'>
-                        <Text>Latest update: {lastUpdate}</Text>
+                        <Text>{lastUpdate}</Text>
                         <Text>
                             <Text bold>{lastUpdateVal} </Text>
                             BPM
