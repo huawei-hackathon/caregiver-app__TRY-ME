@@ -19,10 +19,11 @@ import { store } from './redux/store'
 // Import pages
 import LoginPage from './pages/login'
 import SignupPage from './pages/signup'
+
 import ProfilePage from './pages/profile'
 import HomePage from './pages/Homepage'
 import PastRecordPage from './pages/pastRecords';
-
+import AnnouncementPage from './pages/AnnouncementPage'
 
 let Stack = createNativeStackNavigator();
 let Tab = createBottomTabNavigator();
@@ -47,6 +48,8 @@ let Handler = () => {
                 iconName = focused ? 'person' : 'person-outline';
               } else if (route.name == 'Past Records') {
                 iconName = focused ? 'clipboard' : 'clipboard-outline'
+              } else if (route.name === 'Announcement') {
+                iconName = focused ? 'call' : 'call-outline'
               }
 
               return <Ionicons name={iconName} size={size} color={color} />;
@@ -58,6 +61,7 @@ let Handler = () => {
         >
           <Tab.Screen name="Home" component={HomePage} />
           <Tab.Screen name="Past Records" component={PastRecordPage} />
+          <Tab.Screen name="Announcement" component={AnnouncementPage} />
           <Tab.Screen name="Profile" component={ProfilePage} />
         </Tab.Navigator>
       </>

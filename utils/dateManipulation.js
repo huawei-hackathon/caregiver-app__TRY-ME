@@ -17,7 +17,7 @@ module.exports.dateToDaysAndTime = (d) => {
         return `Yesterday, ${d.getHours()}:${toTwoPlace(d.getMinutes())}:${toTwoPlace(d.getSeconds())}`
     }
     else {
-        return `${daysDiff} days ago, ${d.getHours()}:${toTwoPlace(d.getMinutes())}:${toTwoPlace(d.getSeconds())}`
+        return `${Math.abs(daysDiff)} days ago, ${d.getHours()}:${toTwoPlace(d.getMinutes())}:${toTwoPlace(d.getSeconds())}`
     }
 }
 
