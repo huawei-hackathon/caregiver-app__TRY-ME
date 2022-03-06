@@ -7,12 +7,14 @@ import HeartCard from './components/HeartCard';
 import StepsCard from './components/StepsCard';
 import SleepTime from './components/SleepCard';
 import FoodCard from './components/FoodCard';
+import RoomCard from './components/RoomCard';
 
 // Pages
 import HeartRatePage from './activityPages/HeartPage';
 import StepcountPage from './activityPages/StepcountPage';
 import SleepPage from './activityPages/SleepPage';
 import MealPage from './activityPages/MealPage';
+import RoomPage from './activityPages/RoomPage';
 
 // Utils
 import { dateToStr } from '../../utils'
@@ -40,6 +42,13 @@ let HomePageContent = ({ navigation }) => {
                         }}
                     >
                         <HeartCard />
+                    </Pressable>
+
+                    <Pressable w="100%" rounded='md' shadow={3}
+                        onPress={() => {
+                            navigation.navigate("Location")
+                        }}>
+                        <RoomCard />
                     </Pressable>
 
                     <HStack width="100%" justifyContent='space-between' height='150px'>
@@ -87,6 +96,7 @@ const HomePage = () => {
             <HomeStack.Screen name="Step Count" component={StepcountPage} />
             <HomeStack.Screen name="Sleep" component={SleepPage} />
             <HomeStack.Screen name="Meals" component={MealPage} />
+            <HomeStack.Screen name="Location" component={RoomPage} />
         </HomeStack.Navigator>
     )
 }

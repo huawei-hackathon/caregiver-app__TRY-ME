@@ -1,5 +1,6 @@
 import { valPw, valUsername } from "./loginhelper"
 import { dateToStr, dateToDaysAndTime, getHAgo, dateToTime } from "./dateManipulation"
+import { announceMessage, tryLogin } from "./apiRequests"
 
 export {
     valPw,
@@ -7,5 +8,7 @@ export {
     dateToStr,
     dateToDaysAndTime,
     getHAgo,
-    dateToTime
+    dateToTime,
+    announceMessage,
+    tryLogin
 }

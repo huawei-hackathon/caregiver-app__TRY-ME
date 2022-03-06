@@ -17,7 +17,7 @@ export function ErrorModal(props) {
 
     console.log(show)
     return (
-        <Box w="100%">
+        <Box w="100%" position='absolute' top="-30px">
             <Collapse isOpen={show}>
                 <Alert w="100%" status="error">
                     <VStack space={1} flexShrink={1} w="100%">

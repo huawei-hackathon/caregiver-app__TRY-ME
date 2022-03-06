@@ -11,6 +11,9 @@ import {
     Center,
     Link,
 } from "native-base"
+import { connect } from "react-redux"
+
+import { tryLogin } from "../../utils"
 
 import { useState } from 'react'
 import { valPw, valUsername } from "../../utils/helper"
@@ -19,7 +22,6 @@ import { StyleSheet } from "react-native"
 
 const LoginArea = (props) => {
     let navigation = props.navigation
-    let setLogin = props.setLogin
     let [username, setUsername] = useState('')
     let [pw, setPw] = useState('')
     let [errModalShow, setErrModalShow] = useState(false)
@@ -29,7 +31,16 @@ const LoginArea = (props) => {
         if (valUsername(username) && valPw(pw)) {
             console.log('username', username)
             console.log('password', pw)
-            setLogin(true)
+            tryLogin(username, pw)
+                .then(res => {
+                    console.log(res)
+                    if (res['success'] && res['validated']) {
+                        console.log('logging in')
+                        props.dispatchLogin(username, username)
+                    } else {
+                        setErrModalShow(true)
+                    }
+                })
 
         } else {
             setErrModalShow(true)
@@ -45,7 +56,6 @@ const LoginArea = (props) => {
                     style={styles.errModal}
                     setModalShow={setErrModalShow}
                     show={errModalShow} /> : <></>
-
                 }
 
                 <Heading
@@ -122,6 +132,17 @@ const LoginArea = (props) => {
     )
 }
 
+const mapDispatchToProps = (dispatch) => ({
+
+    dispatchLogin: (name, userId) => dispatch({
+        type: 'loginAsUser', payload: {
+            name,
+            userId
+        }
+    })
+
+})
+
 const styles = StyleSheet.create({
     errModal: {
         position: 'absolute',
@@ -129,4 +150,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default LoginArea
+export default connect(null, mapDispatchToProps)(LoginArea)

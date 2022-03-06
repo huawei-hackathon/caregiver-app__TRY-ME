@@ -26,6 +26,7 @@ module.exports.dateToTime = (d) => {
 }
 
 
+
 module.exports.getHAgo = (d) => {
     const hAgo = Math.round((new Date().getTime() - d.getTime()) / (60 * 60 * 1000))
     return hAgo

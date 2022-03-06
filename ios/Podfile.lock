@@ -3,9 +3,12 @@ PODS:
   - DoubleConversion (1.1.6)
   - EXApplication (4.0.1):
     - ExpoModulesCore
+  - EXAV (10.2.1):
+    - ExpoModulesCore
+    - ReactCommon/turbomodule/core
   - EXConstants (13.0.0):
     - ExpoModulesCore
-  - EXFileSystem (13.1.0):
+  - EXFileSystem (13.1.4):
     - ExpoModulesCore
   - EXFont (10.0.4):
     - ExpoModulesCore
@@ -291,11 +294,13 @@ PODS:
     - React-perflogger (= 0.64.3)
   - RNAppleHealthKit (1.7.0):
     - React
-  - RNGestureHandler (2.2.0):
+  - RNGestureHandler (2.1.3):
     - React-Core
   - RNScreens (3.10.1):
     - React-Core
     - React-RCTImage
+  - RNSoundPlayer (0.11.3):
+    - React
   - RNSVG (12.1.1):
     - React
   - Yoga (1.14.0)
@@ -303,6 +308,7 @@ PODS:
 DEPENDENCIES:
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - EXApplication (from `../node_modules/expo-application/ios`)
+  - EXAV (from `../node_modules/expo-av/ios`)
   - EXConstants (from `../node_modules/expo-constants/ios`)
   - EXFileSystem (from `../node_modules/expo-file-system/ios`)
   - EXFont (from `../node_modules/expo-font/ios`)
@@ -343,6 +349,7 @@ DEPENDENCIES:
   - RNAppleHealthKit (from `../node_modules/react-native-health`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - RNSoundPlayer (from `../node_modules/react-native-sound-player`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -355,6 +362,8 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   EXApplication:
     :path: "../node_modules/expo-application/ios"
+  EXAV:
+    :path: "../node_modules/expo-av/ios"
   EXConstants:
     :path: "../node_modules/expo-constants/ios"
   EXFileSystem:
@@ -431,6 +440,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gesture-handler"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNSoundPlayer:
+    :path: "../node_modules/react-native-sound-player"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   Yoga:
@@ -440,8 +451,9 @@ SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   DoubleConversion: cf9b38bf0b2d048436d9a82ad2abe1404f11e7de
   EXApplication: bdc8dc27713235565da1029a34385229f31b8e08
+  EXAV: b9ed0c201092244c46aa78f907f5c66176bed236
   EXConstants: 5d18484e38e8eacef7695a82214b6ac90133dedf
-  EXFileSystem: 7d1309ba6b38b82ef7fc9e80174de3f9184ac8b4
+  EXFileSystem: 08a3033ac372b6346becf07839e1ccef26fb1058
   EXFont: 1fb13af43dc517c01c0ff21a6e32f9f9bf2ea602
   EXKeepAwake: b571c2ad8323b2fced6e907766e2549f75119471
   Expo: d9b8b5e49c200471fc473a652a84fe30dee73027
@@ -476,8 +488,9 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: 493d9abb8b23c3f84e19ae221eeba92cadcb70dc
   ReactCommon: 8fea6422328e2fc093e25c9fac67adbcf0f04fb4
   RNAppleHealthKit: 60a6beefdd89a75811e9a8873a5e24f351dee681
-  RNGestureHandler: bf572f552ea324acd5b5464b8d30755b2d8c1de6
+  RNGestureHandler: e1099204721a17a89c81fcd1cc2e92143dc040fb
   RNScreens: 522705f2e5c9d27efb17f24aceb2bf8335bc7b8e
+  RNSoundPlayer: 6b5532fb8e9afe17af48e62813c80ad568aea5d3
   RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
   Yoga: e6ecf3fa25af9d4c87e94ad7d5d292eedef49749
 

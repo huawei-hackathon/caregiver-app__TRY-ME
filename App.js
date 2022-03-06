@@ -9,7 +9,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { NativeBaseProvider, Box, Text, Center, usePropsResolution } from 'native-base';
-import { Provider } from 'react-redux'
+import { connect, Provider, useStore } from 'react-redux'
+
+import 'react-native-gesture-handler';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -23,14 +25,14 @@ import SignupPage from './pages/signup'
 import ProfilePage from './pages/profile'
 import HomePage from './pages/Homepage'
 import PastRecordPage from './pages/pastRecords';
-import AnnouncementPage from './pages/AnnouncementPage'
+import ChatPage from './pages/ChatPage'
 
 let Stack = createNativeStackNavigator();
 let Tab = createBottomTabNavigator();
 
 
-let Handler = () => {
-  let [login, setLogin] = useState(true)
+let Handler = ({ login }) => {
+  let store = useStore()
 
   if (login) {
     return (
@@ -48,8 +50,8 @@ let Handler = () => {
                 iconName = focused ? 'person' : 'person-outline';
               } else if (route.name == 'Past Records') {
                 iconName = focused ? 'clipboard' : 'clipboard-outline'
-              } else if (route.name === 'Announcement') {
-                iconName = focused ? 'call' : 'call-outline'
+              } else if (route.name === 'Chat') {
+                iconName = focused ? 'chatbubble-ellipses' : 'chatbubble-ellipses-outline'
               }
 
               return <Ionicons name={iconName} size={size} color={color} />;
@@ -61,7 +63,7 @@ let Handler = () => {
         >
           <Tab.Screen name="Home" component={HomePage} />
           <Tab.Screen name="Past Records" component={PastRecordPage} />
-          <Tab.Screen name="Announcement" component={AnnouncementPage} />
+          <Tab.Screen name="Chat" component={ChatPage} />
           <Tab.Screen name="Profile" component={ProfilePage} />
         </Tab.Navigator>
       </>
@@ -70,11 +72,20 @@ let Handler = () => {
     return (
       <Stack.Navigator initialRouteName='Login'>
         <Stack.Screen name='Signup' component={SignupPage} />
-        <Stack.Screen name='Login' component={LoginPage} initialParams={{ setLogin }} />
+        <Stack.Screen name='Login' component={LoginPage} />
       </Stack.Navigator>
     )
   }
 }
+
+const mapStateToProps = (state) => {
+  const { login } = state
+  return {
+    login
+  }
+}
+
+Handler = connect(mapStateToProps)(Handler)
 
 
 let App = () => {
