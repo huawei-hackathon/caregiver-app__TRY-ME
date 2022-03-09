@@ -1,36 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Badge, Center, Text, Box, HStack, Stack, Heading } from 'native-base'
+import { Badge, Center, Text, Box, HStack, Stack, Heading, Spinner } from 'native-base'
 import { VictoryBar } from 'victory-native';
+import { connect, useStore } from 'react-redux';
 
+import { getData } from '../../../utils/apiRequests';
 
-const StepsCard = () => {
-    const [stepCount, setStepCount] = useState(0)
+const StepsCard = ({ data }) => {
     const [stepGoal, setStepGoal] = useState(0)
     const [badgeColor, setBadgeColor] = useState('')
 
     useEffect(() => {
         setStepGoal(10000)
-        setTimeout(() => {
-            setStepCount(4000)
-        }, 100)
     }, [])
-
-    useEffect(() => {
-        console.log(stepCount, stepGoal / 24 * new Date().getHours())
-
-        // Set healthy step count or unhealthy step count
-        if ((stepCount < stepGoal / 24 * new Date().getHours())) {
-            if ((stepCount + 1000 >= stepGoal / 24 * new Date().getHours())) {
-
-                setBadgeColor("#F8E948") // in progress
-                return
-            }
-
-            setBadgeColor('#F04F4F') // danger
-        } else {
-            setBadgeColor('lightgreen') // complete
-        }
-    }, [stepCount])
 
     return (
         <Box width="100%" rounded="lg" overflow="hidden" borderColor="coolGray.200" borderWidth="1" _dark={{
@@ -43,63 +24,78 @@ const StepsCard = () => {
             backgroundColor: "gray.50"
         }}>
             <Stack p="4" space={3} height="100%" justifyContent='center'>
-                <Stack space={2}>
-                    <Heading size="md" >
-                        Step count👣
-                    </Heading>
-                    <HStack alignItems="center" space={1}>
-                        <Text bold fontSize="lg">{`${stepCount}`}</Text>
-                        <Text>steps</Text>
-                    </HStack>
+                <Heading size="md" >
+                    Step count👣
+                </Heading>
 
-                    {/* <Badge colorScheme={badgeColor} width='100px'></Badge> */}
-                </Stack>
+                {
+                    (data.length > 0) &&
+                    <>
+                        <Stack space={2}>
+                            <HStack alignItems="center" space={1}>
+                                <Text bold fontSize="lg">{data[data.length - 1]['y']}</Text>
+                                <Text>steps</Text>
+                            </HStack>
+                        </Stack>
 
-                <HStack my={2} alignItems="center" space={4} justifyContent="space-between">
-                    <Center flex={1}>
-                        <Text
-                            style={{
-                                position: 'absolute',
-                                top: -20,
-                                right: -10,
-                            }}
-                            fontSize='xs'
-                            color='gray.500'
-                        >
-                            /{stepGoal}
-                        </Text>
-                        <VictoryBar
-                            width={150}
-                            height={30}
-                            barWidth={30}
-                            barRatio={0}
-                            alignment='end'
-                            padding={{
-                                top: 0,
-                            }}
-                            data={[{ x: 1, y: stepCount }]}
-                            style={{
-                                data: {
-                                    fill: badgeColor,
-                                },
-                                parent: {
-                                    backgroundColor: 'lightgray',
-                                }
-                            }}
-                            domain={{ x: [0, 1], y: [0, stepGoal] }}
-                            animate={{
-                                onEnter: {
-                                    duration: 50,
-                                    easing: 'exp'
-                                }
-                            }}
-                            horizontal
-                        />
-                    </Center>
-                </HStack>
+                        <HStack my={2} alignItems="center" space={4} justifyContent="space-between">
+                            <Center flex={1}>
+                                <Text
+                                    style={{
+                                        position: 'absolute',
+                                        top: -20,
+                                        right: -10,
+                                    }}
+                                    fontSize='xs'
+                                    color='gray.500'
+                                >
+                                    /{stepGoal}
+                                </Text>
+
+
+                                <VictoryBar
+                                    width={150}
+                                    height={30}
+                                    barWidth={30}
+                                    barRatio={0}
+                                    alignment='end'
+                                    padding={{
+                                        top: 0,
+                                    }}
+                                    data={[{ x: 1, y: data[data.length - 1]['y'] }]}
+                                    style={{
+                                        data: {
+                                            fill: badgeColor,
+                                        },
+                                        parent: {
+                                            backgroundColor: 'lightgray',
+                                        }
+                                    }}
+                                    domain={{ x: [0, 1], y: [0, stepGoal] }}
+                                    animate={{
+                                        onEnter: {
+                                            duration: 50,
+                                            easing: 'exp'
+                                        }
+                                    }}
+                                    horizontal
+                                />
+                            </Center>
+                        </HStack>
+                    </>
+                }
+
+                {/* {loading && <Spinner />} */}
+                {/* {err && <Text>An error occured. Try again later.</Text>} */}
             </Stack>
         </Box >
     )
 };
 
-export default StepsCard
+const mapStateToProps = (state) => {
+    return {
+        data: state.stepData.D
+    }
+}
+
+export default connect(mapStateToProps)(StepsCard)

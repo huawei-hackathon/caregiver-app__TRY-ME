@@ -5,9 +5,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Audio } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
 
-import { useStore } from 'react-redux';
+import { connect, useStore } from 'react-redux';
 
-import { dateToTime, dateToStr } from '../../utils';
+import { dateToTime, dateToStr, getConvo } from '../../utils';
 
 import RecordModal from './components/RecordModal';
 import TextModal from './components/TextModal';
@@ -87,7 +87,7 @@ const ChatReplies = ({ chats }) => {
 
     return (
         <Box w="400px">
-            {
+            {chats ?
                 chats.map(({ senderId, date, audioFile, text }) => {
                     if (dateToStr(date).slice(0, -8) !== prevDate) {
                         return (
@@ -111,65 +111,33 @@ const ChatReplies = ({ chats }) => {
                         )
                     }
                     prevDate = dateToStr(date).slice(0, -8);
-                })
+                }) :
+                <Text
+                    textAlign='center'
+                    fontSize='sm'
+                    color='gray.500'
+                    my={4}>No messages. Start your conversation now!</Text>
             }
         </Box>
     )
 }
 
-let ChatComponent = () => {
+let ChatComponent = ({ chats, userId, updateChat }) => {
     const [recordModalVisible, setRecordModalVisible] = useState(false)
     const [textModalVisible, setTextModalVisible] = useState(false)
-    const [chats, setChats] = useState([])
 
     const scrollViewRef = useRef();
 
     useEffect(() => {
-        // TODO: fetch chat from daniel here 
-        let sortable = [
-            {
-                senderId: '15',
-                date: new Date(2022, 2, 1),
-                text: 'hello',
-                audioFile: 'https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba-online-audio-converter.com_-1.wav'
-            },
-            {
-                senderId: '14',
-                date: new Date(2022, 2, 2),
-                text: 'heyo',
-                audioFile: 'https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba-online-audio-converter.com_-1.wav'
-            },
-            {
-                senderId: '15',
-                date: new Date(2022, 1, 26),
-                text: 'how are you?',
-                audioFile: 'https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba-online-audio-converter.com_-1.wav'
-            },
-            {
-                senderId: '15',
-                date: new Date(2022, 2, 3),
-                text: 'have you eaten?',
-                audioFile: 'https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba-online-audio-converter.com_-1.wav'
-            },
-            {
-                senderId: '14',
-                date: new Date(2022, 2, 4),
-                text: 'im great',
-                audioFile: 'https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba-online-audio-converter.com_-1.wav'
-            },
-            {
-                senderId: '15',
-                date: new Date(2022, 1, 27),
-                text: 'do you need anything?',
-                audioFile: 'https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba-online-audio-converter.com_-1.wav'
-            },
-        ]
-
-        sortable.sort((a, b) => {
-            return a['date'] - b['date']
-        })
-
-        setChats(sortable)
+        setInterval(() => {
+            getConvo(userId)
+                .then(res => {
+                    updateChat(res.data)
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        }, 1000)
     }, [])
 
     return (
@@ -184,6 +152,7 @@ let ChatComponent = () => {
 
             <Center my={3} position="absolute" top={5} zIndex={-1} w='100%'
                 opacity={(recordModalVisible || textModalVisible) ? 30 : 100}>
+
                 <Center>
                     <ScrollView w='100%' h='500px' my={3}
                         bg="gray.300"
@@ -215,11 +184,26 @@ let ChatComponent = () => {
                         </Button>
                     </Box>
                 </Center>
+
             </Center>
 
         </Box >
     )
 }
+
+const mapStateToProps = (state) => {
+    return {
+        userId: state.userInfo.userId,
+        chat: state.chat || []
+    }
+}
+const mapDispatchToProps = (dispatch) => {
+    return {
+        updateChat: (pl) => dispatch({ type: 'update/chat', payload: pl })
+    }
+}
+
+ChatComponent = connect(mapStateToProps, mapDispatchToProps)(ChatComponent)
 
 export default function ChatPage() {
     return (

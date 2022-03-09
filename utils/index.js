@@ -1,6 +1,7 @@
 import { valPw, valUsername } from "./loginhelper"
 import { dateToStr, dateToDaysAndTime, getHAgo, dateToTime } from "./dateManipulation"
-import { announceMessage, tryLogin } from "./apiRequests"
+import { announceMessage, tryLogin, getData, getConvo, getReport, getUserInfo } from "./apiRequests"
+import { getTickVal, getCategories } from "./chartHelper"
 
 export {
     valPw,
@@ -10,5 +11,11 @@ export {
     getHAgo,
     dateToTime,
     announceMessage,
-    tryLogin
+    tryLogin,
+    getData,
+    getConvo,
+    getTickVal,
+    getCategories,
+    getReport,
+    getUserInfo
 }

@@ -5,8 +5,8 @@ import { getHAgo, dateToDaysAndTime } from '../../../utils';
 
 const ContentList = ({ contList }) => {
     const allCont = []
+    let i = 0
     contList.forEach(({ type, name }) => {
-
         allCont.push(
             <>
                 <HStack px={3} py={0.5} bg="gray.100" borderRadius={5}
@@ -14,7 +14,8 @@ const ContentList = ({ contList }) => {
                         borderColor: 'lightgray',
                         borderWidth: '0.5px',
                         borderStyle: 'solid'
-                    }}>
+                    }}
+                    key={`${i}-list2`}>
                     <Box width="60%">
                         <Text bold fontSize='sm'>{name}</Text>
                     </Box>
@@ -28,6 +29,7 @@ const ContentList = ({ contList }) => {
                 </HStack>
             </>
         )
+        i += 1
     });
     return (
         <Box p={2} w="170" h="160" justifyContent="space-around">

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Animated } from 'react-native';
-import { Heading, Text, Pressable, Box, Center, HStack, VStack } from 'native-base'
+import { Heading, Text, Pressable, Box, Center, HStack, VStack, Spinner } from 'native-base'
+import { useStore, connect } from 'react-redux';
 
 import ChartComponent from './Chart';
-import { dateToDaysAndTime, dateToStr, dateToTime } from '../../../../utils';
+import { dateToDaysAndTime, getData } from '../../../../utils';
 
 const TabBar = ({ nav, position, setPos }) => {
     return (
@@ -49,7 +50,7 @@ const TabBar = ({ nav, position, setPos }) => {
     )
 }
 
-const getData = ({ type }) => {
+const getMockData = ({ type }) => {
     console.log('type', type)
     let total = 0
     let data = []
@@ -138,32 +139,59 @@ const getData = ({ type }) => {
     }
 }
 
-
 const navObjs = ['D', 'W', 'M', 'Y']
 
-let HeartRatePage = () => {
+let HeartRatePage = ({ userId, data }) => {
+    const store = useStore()
+
     const pageMap = ["D", "W", "M", "Y"]
     const [page, setPage] = useState(0)
-    const [tickValues, setTickValues] = useState([])
-    const [chartData, setChartData] = useState([])
+    const [tickValTmp, setTickValues] = useState()
     const [averageBpm, setAverageBpm] = useState(-1)
     const [theme, setTheme] = useState({})
 
     const [lastUpdate, setLastUpdate] = useState('')
     const [lastUpdateVal, setLastUpdateVal] = useState('')
+    const [loading, setLoading] = useState(false)
+    const [isErr, setIsErr] = useState(false)
+    console.log(data, 'HEARTPAGE DATA')
+
+    useEffect(async () => {
+        let arr = ['W', 'M', 'Y']
+        let heartRateData
+
+        for (let i = 0; i < arr.length; i++) {
+            console.log(data[arr[i]])
+            if (data[arr[i]].length == 0) {
+                heartRateData = await getData('heartRate', arr[i], store.getState().userInfo.elderlyId)
+                if (heartRateData.success) {
+                    store.dispatch({ type: `update/heartData/${arr[i]}`, payload: { data: heartRateData.data } })
+                }
+            }
+        }
+    }, [])
 
     useEffect(() => {
-        let dataObj = getData({ type: pageMap[page] })
-
-        setTickValues(dataObj['tickValues'])
-        setChartData(dataObj['data'])
-        setTheme(dataObj['theme'])
-        setAverageBpm(Math.round(dataObj['average']))
-
         const d = new Date()
         setLastUpdate(dateToDaysAndTime(d))
         setLastUpdateVal(54)
+        const tickValMap = {
+            'D': [0, 6, 12, 18, 23],
+            'W': [0, 3, 6],
+            'M': [1, 15, 30],
+            'Y': [1, 6, 12]
+        }
+        setTickValues(tickValMap[pageMap[page]])
+        setAverageBpm(10)
 
+        let total = 0
+        let toDiv = 0
+        data[pageMap[page]].map(({ x, y }) => {
+            total += y
+            toDiv += 1
+        })
+
+        setAverageBpm(Math.round(total / toDiv))
     }, [page])
 
     return (
@@ -177,32 +205,45 @@ let HeartRatePage = () => {
                     />
                 </Box>
 
-                <VStack pl={3}>
-                    <Text bold pt={3} color='gray.400'>AVERAGE</Text>
-                    <HStack alignItems='center'>
-                        <Heading>{averageBpm}</Heading>
-                        <Text bold pl={1} color='gray.400'>bpm</Text>
-                    </HStack>
-                </VStack>
+                {/* {(chartData) ? <Text>chart</Text> : <Text>No chart</Text>} */}
+                {(data[pageMap[page]].length > 0) ? <>
+                    <VStack pl={3}>
+                        <Text bold pt={3} color='gray.400'>AVERAGE</Text>
+                        <HStack alignItems='center'>
+                            <Heading>{averageBpm}</Heading>
+                            <Text bold pl={1} color='gray.400'>bpm</Text>
+                        </HStack>
+                    </VStack>
 
+                    <ChartComponent
+                        chartData={data[pageMap[page]]}
+                        tickValues={tickValTmp}
+                        theme={theme} />
 
-                <ChartComponent
-                    chartData={chartData}
-                    tickValues={tickValues}
-                    theme={theme} />
+                    <Box m={5} p={4} bg="gray.200" borderRadius={10}>
+                        <HStack justifyContent='space-between'>
+                            <Text>{lastUpdate}</Text>
+                            <Text>
+                                <Text bold>{lastUpdateVal} </Text>
+                                BPM
+                            </Text>
+                        </HStack>
+                    </Box>
+                </> : <></>}
 
-                <Box m={5} p={4} bg="gray.200" borderRadius={10}>
-                    <HStack justifyContent='space-between'>
-                        <Text>{lastUpdate}</Text>
-                        <Text>
-                            <Text bold>{lastUpdateVal} </Text>
-                            BPM
-                        </Text>
-                    </HStack>
-                </Box>
+                {loading && <Spinner />}
+                {isErr && <Text>An error occured. Try again later.</Text>}
             </VStack>
         </Center >
     )
 }
 
-export default HeartRatePage
+
+const mapStateToProps = (state) => {
+    return {
+        userId: state.userInfo.elderlyId,
+        data: state.heartData
+    }
+}
+
+export default connect(mapStateToProps)(HeartRatePage)

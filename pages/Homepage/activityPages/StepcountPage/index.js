@@ -3,7 +3,8 @@ import { Animated } from 'react-native';
 import { Heading, Text, Pressable, Box, Center, HStack, VStack } from 'native-base'
 
 import ChartComponent from './chart';
-import { dateToDaysAndTime, dateToStr, dateToTime } from '../../../../utils';
+import { dateToDaysAndTime, getData, dateToTime, getTickVal, getCategories } from '../../../../utils';
+import { connect, useStore } from 'react-redux';
 
 const TabBar = ({ nav, position, setPos }) => {
     return (
@@ -49,7 +50,7 @@ const TabBar = ({ nav, position, setPos }) => {
     )
 }
 
-const getData = ({ type }) => {
+const getMockData = ({ type }) => {
     console.log('type', type)
     let total = 0
     let data = []
@@ -140,29 +141,50 @@ const getData = ({ type }) => {
 
 const navObjs = ['D', 'W', 'M', 'Y']
 
-let StepcountPage = () => {
+let StepcountPage = ({ data }) => {
     const pageMap = ["D", "W", "M", "Y"]
+    const store = useStore()
+
     const [page, setPage] = useState(0)
     const [categories, setCategories] = useState([])
-    const [chartData, setChartData] = useState([])
     const [stepsToday, setStepsToday] = useState(-1)
     const [tickValues, setTickValues] = useState([])
 
     const [lastUpdate, setLastUpdate] = useState('')
     const [lastUpdateVal, setLastUpdateVal] = useState('')
 
+    useEffect(async () => {
+        let arr = ['W', 'M', 'Y']
+        let stepCountData
+
+        for (let i = 0; i < arr.length; i++) {
+            console.log(data[arr[i]])
+            if (data[arr[i]].length == 0) {
+                stepCountData = await getData('stepCount', arr[i], store.getState().userInfo.elderlyId)
+                if (stepCountData.success) {
+                    store.dispatch({ type: `update/stepData/${arr[i]}`, payload: { data: stepCountData.data } })
+                }
+            }
+        }
+    }, [])
+
     useEffect(() => {
-        let dataObj = getData({ type: pageMap[page] })
-
-        setCategories(dataObj['categories'])
-        setChartData(dataObj['data'])
-        setTickValues(dataObj['tickValues'])
-        setStepsToday(Math.round(dataObj['stepDisp']))
-
         const d = new Date()
         setLastUpdate(dateToDaysAndTime(d))
-        setLastUpdateVal(54)
+        setLastUpdateVal(5000)
+        setCategories(getCategories(pageMap[page]))
+        setTickValues(getTickVal(pageMap[page]))
 
+        if (data && page == 0) {
+            setStepsToday(data[pageMap[page]].slice(-1)[0].y)
+        } else if (data) {
+            let t = 0, d = 0
+            data[pageMap[page]].map(({ x, y }) => {
+                t += y
+                d += 1
+            })
+            setStepsToday(t / d)
+        }
     }, [page])
 
     return (
@@ -188,10 +210,12 @@ let StepcountPage = () => {
                 </VStack>
 
 
-                <ChartComponent
-                    chartData={chartData}
-                    categories={categories}
-                    tickValues={tickValues} />
+                {(data) &&
+                    <ChartComponent
+                        chartData={data[pageMap[page]]}
+                        categories={categories}
+                        tickValues={tickValues} />
+                }
 
                 <Box m={5} p={4} bg="gray.200" borderRadius={10}>
                     <HStack justifyContent='space-between'>
@@ -207,4 +231,10 @@ let StepcountPage = () => {
     )
 }
 
-export default StepcountPage
+const mapStateToProps = (state) => {
+    return {
+        data: state.stepData
+    }
+}
+
+export default connect(mapStateToProps)(StepcountPage)

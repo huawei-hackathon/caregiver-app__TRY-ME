@@ -24,7 +24,7 @@ import SignupPage from './pages/signup'
 
 import ProfilePage from './pages/profile'
 import HomePage from './pages/Homepage'
-import PastRecordPage from './pages/pastRecords';
+import PastRecordPage from './pages/pastRecord';
 import ChatPage from './pages/ChatPage'
 
 let Stack = createNativeStackNavigator();

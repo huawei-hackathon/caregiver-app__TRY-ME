@@ -31,12 +31,13 @@ const TextModal = ({ setTextModalVisible }) => {
                     if (res.success) {
                         console.log(res.msg)
                         setInputTxt('')
-                        setIsSending(false)
                         setIsSuccess(true)
 
                     } else {
+                        setIsSuccess(false)
                         console.log('ERROR', res.msg)
                     }
+                    setIsSending(false)
                 })
         }
     }
@@ -54,10 +55,13 @@ const TextModal = ({ setTextModalVisible }) => {
                 justifyContent="center"
                 alignItems="center"
             >
-                {isSuccess && <SuccessAlert title="Message sent"
+                {(!isSending && isSuccess) && <SuccessAlert title="Message sent"
                     msg="Your message has been successfully delivered! :D"
                     setIsShown={setIsSuccess} />}
 
+                {(!isSending && !isSuccess) && <Text>Failed to send. Try again later.</Text>
+
+                }
 
                 <Box
                     justifyContent="center"

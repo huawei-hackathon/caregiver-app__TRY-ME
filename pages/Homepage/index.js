@@ -17,7 +17,8 @@ import MealPage from './activityPages/MealPage';
 import RoomPage from './activityPages/RoomPage';
 
 // Utils
-import { dateToStr } from '../../utils'
+import { dateToStr, getData } from '../../utils'
+import { useStore } from 'react-redux';
 
 const HomeStack = createNativeStackNavigator()
 
@@ -89,6 +90,29 @@ let HomePageContent = ({ navigation }) => {
 }
 
 const HomePage = () => {
+    const store = useStore()
+
+    useEffect(async () => {
+        let heartRateData = await getData('heartRate', 'D', store.getState().userInfo.elderlyId)
+        if (heartRateData.success) {
+            store.dispatch({ type: 'update/heartData/D', payload: { data: heartRateData.data } })
+        }
+
+        let stepData = await getData('stepCount', 'D', store.getState().userInfo.elderlyId)
+        if (stepData.success) {
+            store.dispatch({ type: "update/stepData/D", payload: { data: stepData.data } })
+        }
+
+        let sleepData = await getData('sleepSeconds', 'D', store.getState().userInfo.elderlyId)
+        if (sleepData.success) {
+            store.dispatch({ type: 'update/sleepData/D', payload: { data: sleepData.data } })
+        }
+        let sleepDataW = await getData('sleepSeconds', 'W', store.getState().userInfo.elderlyId)
+        if (sleepDataW.success) {
+            store.dispatch({ type: 'update/sleepData/W', payload: { data: sleepDataW.data } })
+        }
+    }, [])
+
     return (
         <HomeStack.Navigator>
             <HomeStack.Screen name="Home" component={HomePageContent} />

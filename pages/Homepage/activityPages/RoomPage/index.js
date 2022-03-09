@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Text, Box, Center } from 'native-base'
-import ChartComponent from './chart'
+import { Text, Box, Center, Heading, HStack, Spinner } from 'native-base'
 
 import { dateToTime } from '../../../../utils'
 
@@ -28,66 +27,69 @@ const getData = () => {
       },
    ]
 
-   let tToMin = (t) => {
-      let [h, m] = t.split(':')
-      return h * 60 + m
-   }
-
-   let currI = 0
-   let roomArr = []
-
-   let data = roomData.map(({ room, start, end }) => {
-      let startD = tToMin(dateToTime(start))
-      let endD = tToMin(dateToTime(end))
-
-      let xVal
-
-      if (roomArr.findIndex(e => e === room) === -1) {
-         xVal = currI
-         roomArr.push(room)
-         currI += 1
-      } else {
-         xVal = roomArr.findIndex(e => e === room)
-      }
-
-      console.log(xVal, room)
-
-      return {
-         x: xVal,
-         open: startD,
-         close: endD,
-         high: endD,
-         low: startD,
-      }
+   roomData.sort((a, b) => {
+      a.start > b.start
    })
+   return roomData
+}
 
-   return {
-      data,
-      roomArr
-   }
+const RoomLogs = ({ data }) => {
+   return (
+      <>
+         {
+            data.map(({ room, start, end }) =>
+               <HStack px={4} py={2} my={1} bg="gray.100" borderRadius={5}
+                  style={{
+                     borderColor: 'lightgray',
+                     borderWidth: '0.5px',
+                     borderStyle: 'solid'
+                  }}>
+                  <Box width="60%">
+                     <Text bold fontSize='md'>{room}</Text>
+                  </Box>
+                  <Box flex={1} justifyContent='center'>
+                     <Text
+                        fontSize='sm'
+                        textAlign='right'
+                        italic
+                        color="gray.500">{dateToTime(start)}-{dateToTime(end)}</Text>
+                  </Box>
+               </HStack>
+            )
+         }
+      </>
+   )
 }
 
 function RoomPage() {
-   const [chartData, setChartData] = useState()
    const [roomArr, setRoomArr] = useState()
    const [dateToday, setDateToday] = useState()
+   const [loading, setLoading] = useState(false)
 
    useEffect(() => {
-      setDateToday(new Date())
-      let { data, roomArr: roomArrTmp } = getData()
+      setLoading(true)
 
-      setChartData(data)
-      console.log(data)
+      setTimeout(() => {
+         setDateToday(new Date())
+         setRoomArr(getData())
 
-      setRoomArr(roomArrTmp)
+         setLoading(false)
+      }, 2000)
    }, [])
 
    return (
       <>
-         {
-            (roomArr && chartData) &&
-            <ChartComponent chartData={chartData} roomArr={roomArr} />
-         }
+         <Center>
+            <Heading my={5}>Room Logs</Heading>
+
+            <Box w="350px">
+               {
+                  roomArr &&
+                  <RoomLogs data={roomArr} />
+               }
+               {loading && <Spinner />}
+            </Box>
+         </Center>
       </>
    )
 }

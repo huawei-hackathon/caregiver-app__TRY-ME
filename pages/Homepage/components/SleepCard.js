@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Center, Text, Box, HStack, Stack, Heading, Badge, VStack } from 'native-base'
 import { VictoryPie, VictoryTheme } from "victory-native";
+import { connect } from 'react-redux';
 
 
-const SleepTime = () => {
-    const [sleepSeconds, setSleepSeconds] = useState(0)
+const SleepTime = ({ data }) => {
     const [sleepHours, setSleepHours] = useState(0)
     const [sleepMins, setSleepMins] = useState(0)
-
-    useEffect(() => {
-        setSleepSeconds(27000)
-        setSleepHours(Math.trunc(sleepSeconds / 3600))
-        setSleepMins((sleepSeconds - sleepHours * 3600) / 60)
-    }, [sleepSeconds, sleepHours])
 
     return (
         <Box width="100%" rounded="lg" overflow="hidden" borderColor="coolGray.200" borderWidth="1" _dark={{
@@ -33,16 +27,20 @@ const SleepTime = () => {
 
                 <Center h={90} w='100%'>
                     <VStack>
-                        <HStack alignItems="center" space={1}>
-                            <Text bold fontSize='2xl'>{sleepHours}</Text>
-                            <Text fontSize="lg">hr</Text>
-                            <Text bold fontSize='2xl'>{sleepMins}</Text>
-                            <Text fontSize="lg">min</Text>
-                        </HStack>
-                        <Text
-                            fontSize="xs" color="gray.500">
-                            In bed
-                        </Text>
+                        {(data.length > 0) &&
+                            <>
+                                <HStack alignItems="center" space={1}>
+                                    <Text bold fontSize='2xl'>{Math.trunc(data[data.length - 1]['y'] / 3600)}</Text>
+                                    <Text fontSize="lg">hr</Text>
+                                    <Text bold fontSize='2xl'>{(data[data.length - 1]['y'] - Math.trunc(data[data.length - 1]['y'] / 3600) * 3600) / 60}</Text>
+                                    <Text fontSize="lg">min</Text>
+                                </HStack>
+                                <Text
+                                    fontSize="xs" color="gray.500">
+                                    In bed
+                                </Text>
+                            </>
+                        }
                     </VStack>
                 </Center>
             </Stack>
@@ -52,4 +50,10 @@ const SleepTime = () => {
     )
 };
 
-export default SleepTime
+const mapStateToProps = (state) => {
+    return {
+        data: state.sleepData.D
+    }
+}
+
+export default connect(mapStateToProps)(SleepTime)

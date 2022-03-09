@@ -3,7 +3,8 @@ import { Animated } from 'react-native';
 import { Heading, Text, Pressable, Box, Center, HStack, VStack } from 'native-base'
 
 import ChartComponent from './chart';
-import { dateToDaysAndTime, dateToTime } from '../../../../utils';
+import { dateToDaysAndTime, getCategories, getTickVal, getData } from '../../../../utils';
+import { connect, useStore } from 'react-redux';
 
 const TabBar = ({ nav, position, setPos }) => {
     return (
@@ -24,7 +25,7 @@ const TabBar = ({ nav, position, setPos }) => {
                                 borderRightWidth='0.5px'
                                 borderRightColor='gray.400'
                                 id={i}
-                                key={`key-${i}`}>
+                                key={`key2-${i}`}>
                                 <Pressable
                                     w='100%'
                                     h='100%'
@@ -49,7 +50,7 @@ const TabBar = ({ nav, position, setPos }) => {
     )
 }
 
-const getData = (type) => {
+const getMockData = (type) => {
     console.log('type', type)
     let total = 0
     let data = []
@@ -124,30 +125,52 @@ const secToHMin = (s) => {
     }
 }
 
-const navObjs = ['W', 'M', 'Y']
 
-let SleepPage = () => {
+let SleepPage = ({ data, elderlyId }) => {
+    const pageMap = ['W', 'M', 'Y']
     const [page, setPage] = useState(0)
     const [categories, setCategories] = useState([])
-    const [chartData, setChartData] = useState([])
     const [secSlept, setSecSlept] = useState(-1)
     const [tickValues, setTickValues] = useState([])
 
     const [lastUpdate, setLastUpdate] = useState('')
     const [lastUpdateVal, setLastUpdateVal] = useState('')
 
+    const store = useStore()
+
+    useEffect(async () => {
+        let arr = ['M', 'Y'] // Day and week settled in home page
+        let sleepData
+
+
+        for (let i = 0; i < arr.length; i++) {
+            console.log(data[arr[i]])
+            if (data[arr[i]].length == 0) {
+                sleepData = await getData('sleepSeconds', arr[i], elderlyId)
+                if (sleepData.success) {
+                    store.dispatch({ type: `update/sleepData/${arr[i]}`, payload: { data: sleepData.data } })
+                }
+            }
+        }
+    }, [])
+
     useEffect(() => {
-        let dataObj = getData(navObjs[page])
-
-        setCategories(dataObj['categories'])
-        setChartData(dataObj['data'])
-        setTickValues(dataObj['tickValues'])
-        setSecSlept(Math.round(dataObj['stepDisp']))
-
         const d = new Date()
         setLastUpdate(dateToDaysAndTime(d))
-        setLastUpdateVal(26070)
+        setLastUpdateVal(data['D'].slice(-1)[0].y)
+        setCategories(getCategories(pageMap[page]))
+        setTickValues(getTickVal(pageMap[page]))
 
+        if (data && page == 0) {
+            setSecSlept(data[pageMap[page]].slice(-1)[0].y)
+        } else if (data) {
+            let t = 0, d = 0
+            data[pageMap[page]].map(({ x, y }) => {
+                t += y
+                d += 1
+            })
+            setSecSlept(t / d)
+        }
     }, [page])
 
     return (
@@ -155,7 +178,7 @@ let SleepPage = () => {
             <VStack mx={5} my={5}>
                 <Box mx={3}>
                     <TabBar
-                        nav={navObjs}
+                        nav={pageMap}
                         position={page}
                         setPos={(x) => { setPage(x) }}
                     />
@@ -175,11 +198,12 @@ let SleepPage = () => {
                     </HStack>
                 </VStack>
 
-
-                <ChartComponent
-                    chartData={chartData}
-                    categories={categories}
-                    tickValues={tickValues} />
+                {(data &&
+                    <ChartComponent
+                        chartData={data[pageMap[page]]}
+                        categories={categories}
+                        tickValues={tickValues} />
+                )}
 
                 <Box m={5} p={4} bg="gray.200" borderRadius={10}>
                     <HStack justifyContent='space-between'>
@@ -197,4 +221,11 @@ let SleepPage = () => {
     )
 }
 
-export default SleepPage
+const mapStateToProps = (state) => {
+    return {
+        data: state.sleepData,
+        elderlyId: state.userInfo.elderlyId
+    }
+}
+
+export default connect(mapStateToProps)(SleepPage)
