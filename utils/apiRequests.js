@@ -1,82 +1,45 @@
 let baseUrl = 'http://119.13.104.214:80'
-let tunnelUrl = 'https://modern-quail-50.loca.lt'
 const axios = require('axios')
 
-const tryLogin = (username, password) => {
-    return new Promise(async (res, rej) => {
-        let options = {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: {
-                'Content-Type': "application/json"
-            },
-            body: JSON.stringify({
-                'caregiverUserId': username,
-                'password': password
-            })
-        }
+const tryLogin = async (username, password) => {
+    try {
+        let res = await axios.post(`${baseUrl}/users/authenticateCaregiver`, {
+            username,
+            password
+        })
 
-        try {
-            let response = await fetch(`${baseUrl}/users/authenticateCaregiver`, options)
-            if (response.ok) {
-                let respJson = await response.json()
-                res({
-                    success: true,
-                    validated: respJson['status'],
-                    msg: 'request was successfl'
-                })
-            } else {
-                res({
-                    success: false,
-                    msg: 'Server side error'
-                })
-            }
+        return {
+            success: true,
+            data: res.data
         }
-        catch (e) {
-            res({
-                success: false,
-                msg: e
-            })
+    }
+    catch (e) {
+        return {
+            success: false,
+            data: e
         }
-    })
+    }
+
 }
 
-const announceMessage = (userId, text) => {
-    return new Promise(async (res, rej) => {
-        let options = {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: {
-                'Content-Type': "application/json"
-            },
-            body: JSON.stringify({
-                'userId': userId,
-                'text': text
-            })
-        }
+const announceMessage = async (userId, text) => {
+    try {
+        let response = await axios.post(`${baseUrl}/announceMessage`, {
+            'userId': userId,
+            'text': text
+        })
 
-        try {
-            let response = await fetch(`${baseUrl}/announceMessage`, options)
-            if (response.ok) {
-                let respJson = await response.json()
-                res({
-                    success: true,
-                    msg: respJson
-                })
-            } else {
-                res({
-                    success: false,
-                    msg: 'Server side error'
-                })
-            }
+        return {
+            success: true,
+            data: response
         }
-        catch (e) {
-            res({
-                success: false,
-                msg: e
-            })
+    }
+    catch (e) {
+        return {
+            success: false,
+            data: e
         }
-    })
+    }
 }
 
 const getData = async (type, interval, userId, dateInp) => {
@@ -147,25 +110,85 @@ const getReport = async (userId) => {
     }
 }
 
-const getUserInfo = async (userId) => {
+const getUserInfo = async (username) => {
     try {
-        let res = await axios.post(`${baseUrl}/users/getProfile`, {
-            userId
+        let res = await axios.post(`${baseUrl}/users/getCaregiverProfile`, {
+            username: username
         })
         return {
             success: true,
-            msg: res.data
+            data: res.data
         }
     }
     catch (e) {
         console.log('GET REPORT ERR:', e)
         return {
             success: false,
-            msg: e
+            data: e
         }
     }
 }
 
+const getLastmeal = async (userId) => {
+    try {
+        let res = await axios.post(`${baseUrl}/food/lastMeal`, {
+            userId
+        })
+        return {
+            success: true,
+            data: res.data
+        }
+    }
+    catch (e) {
+        console.log('GET REPORT ERR:', e)
+        return {
+            success: false,
+            data: e
+        }
+    }
+}
+
+const getDateMeal = async (userId, date = new Date().toISOString().slice(0, 10)) => {
+    try {
+        let res = await axios.post(`${baseUrl}/food/date`, {
+            userId,
+            date
+        })
+        return {
+            success: true,
+            data: res.data.map(e => ({
+                ...e,
+                date: date
+            }))
+        }
+    }
+    catch (e) {
+        console.log('GET REPORT ERR:', e)
+        return {
+            success: false,
+            data: e
+        }
+    }
+}
+
+const postVoiceMsg = async (userId, audio) => {
+    try {
+        let response = await axios.post(`${baseUrl}/recordedCaregiverMessage`, {
+            userId,
+            audio
+        })
+        return {
+            success: true,
+            data: response
+        }
+    }
+    catch (e) {
+        return {
+            success: false,
+            data: e
+        }
+    }
+}
 
 module.exports = {
     announceMessage,
@@ -173,5 +196,8 @@ module.exports = {
     getData,
     getConvo,
     getReport,
-    getUserInfo
+    getUserInfo,
+    getLastmeal,
+    getDateMeal,
+    postVoiceMsg
 }

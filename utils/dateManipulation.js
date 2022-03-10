@@ -21,6 +21,24 @@ module.exports.dateToDaysAndTime = (d) => {
     }
 }
 
+module.exports.dateToDay = (d) => {
+    const dNow = new Date()
+    const utc1 = Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
+    const utc2 = Date.UTC(dNow.getFullYear(), dNow.getMonth(), dNow.getDate());
+
+    const daysDiff = Math.floor((utc2 - utc1) / (1000 * 60 * 60 * 24));
+
+    if (daysDiff == 0) {
+        return `Today`
+    }
+    else if (daysDiff == 1) {
+        return `Yesterday`
+    }
+    else {
+        return `${Math.abs(daysDiff)} days ago`
+    }
+}
+
 module.exports.dateToTime = (d) => {
     return `${d.getHours()}:${toTwoPlace(d.getMinutes())}`
 }

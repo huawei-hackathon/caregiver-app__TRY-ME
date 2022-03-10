@@ -1,6 +1,6 @@
 import { valPw, valUsername } from "./loginhelper"
-import { dateToStr, dateToDaysAndTime, getHAgo, dateToTime } from "./dateManipulation"
-import { announceMessage, tryLogin, getData, getConvo, getReport, getUserInfo } from "./apiRequests"
+import { dateToStr, dateToDaysAndTime, getHAgo, dateToTime, dateToDay } from "./dateManipulation"
+import { announceMessage, tryLogin, getData, getConvo, getReport, getUserInfo, getLastmeal, getDateMeal, postVoiceMsg } from "./apiRequests"
 import { getTickVal, getCategories } from "./chartHelper"
 
 export {
@@ -10,6 +10,7 @@ export {
     dateToDaysAndTime,
     getHAgo,
     dateToTime,
+    dateToDay,
     announceMessage,
     tryLogin,
     getData,
@@ -17,5 +18,8 @@ export {
     getTickVal,
     getCategories,
     getReport,
-    getUserInfo
+    getUserInfo,
+    getLastmeal,
+    getDateMeal,
+    postVoiceMsg
 }

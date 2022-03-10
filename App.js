@@ -8,7 +8,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import { NativeBaseProvider, Box, Text, Center, usePropsResolution } from 'native-base';
+import { NativeBaseProvider } from 'native-base';
+import { LinearGradient } from 'expo-linear-gradient';
 import { connect, Provider, useStore } from 'react-redux'
 
 import 'react-native-gesture-handler';
@@ -56,7 +57,7 @@ let Handler = ({ login }) => {
 
               return <Ionicons name={iconName} size={size} color={color} />;
             },
-            tabBarActiveTintColor: 'tomato',
+            tabBarActiveTintColor: '#06b6d4',
             tabBarInactiveTintColor: 'gray',
             headerShown: false
           })}
@@ -88,9 +89,14 @@ const mapStateToProps = (state) => {
 Handler = connect(mapStateToProps)(Handler)
 
 
+const config = {
+  dependencies: {
+    "linear-gradient": LinearGradient
+  }
+};
 let App = () => {
   return (
-    <NativeBaseProvider>
+    <NativeBaseProvider config={config}>
       <NavigationContainer>
         <Provider store={store}>
           <Handler />

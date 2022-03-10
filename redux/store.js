@@ -1,11 +1,12 @@
 import { createStore } from "redux";
 
 let initState = {
-    login: true,
+    login: false,
     userInfo: {
-        name: '',
-        userId: 57,
-        elderlyId: 20,
+        name: 'Lynn Khua',
+        userId: '60',
+        username: 'LynnKhua',
+        elderlyId: '22',
     },
     elderlyInfo: {
     },
@@ -33,11 +34,8 @@ let initState = {
         'M': [],
         'Y': []
     },
-    mealData: {
-        'D': [],
-        'W': [],
-        'M': [],
-        'Y': []
+    lastMealData: {
+        loaded: false,
     },
     chat: []
 }
@@ -50,9 +48,16 @@ let reducer = (state = initState, action) => {
             login: true,
             userInfo: {
                 name: action.payload.name,
-                userId: action.payload.userId
+                userId: action.payload.userId,
+                elderlyId: action.payload.elderlyId
+            },
+            elderlyInfo: {
+                ...action.payload.elderlyInfo
             }
         }
+    }
+    else if (action.type == 'logout') {
+        return initState
     }
 
     let actions = action.type.split('/')
@@ -68,12 +73,10 @@ let reducer = (state = initState, action) => {
             }
         }
 
-        if (actions[1] == 'chat') {
+        else if (actions[1] == 'chat') {
             return {
                 ...state,
-                [actions[1]]: [
-                    ...[actions[1]],
-                    action.payload.data]
+                chat: action.payload.data
             }
         }
 
@@ -83,6 +86,16 @@ let reducer = (state = initState, action) => {
                 elderlyInfo: {
                     ...state.elderlyInfo,
                     [action.payload.key]: action.payload.data
+                }
+            }
+        }
+
+        else if (actions[1] == 'lastMealData') {
+            return {
+                ...state,
+                lastMealData: {
+                    loaded: true,
+                    ...action.payload.data
                 }
             }
         }
