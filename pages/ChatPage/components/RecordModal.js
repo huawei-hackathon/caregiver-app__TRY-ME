@@ -4,6 +4,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Audio } from 'expo-av';
 import * as FileSystem from 'expo-file-system';
 
+import { postVoiceMsg } from '../../../utils';
+import { useStore } from 'react-redux';
+
 const milisToTimestr = (milis) => {
     let mins = (Math.trunc((milis / 1000) / 60)).toString()
     let s = (Math.trunc(milis / 1000) - (mins * 60)).toString()
@@ -18,6 +21,8 @@ const RecordModal = ({ setRecordModalVisible }) => {
 
     const [timeProgress, setTimeProgress] = useState(0)
     const [isSending, setIsSending] = useState(false)
+
+    const store = useStore()
 
     useEffect(() => {
         return sound
@@ -67,8 +72,12 @@ const RecordModal = ({ setRecordModalVisible }) => {
                 playsInSilentModeIOS: true,
             });
             console.log('Starting recording..');
+
             const { recording } = await Audio.Recording.createAsync(
-                Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY,
+                {
+                    android: { extension: '.wav' },
+                    ios: { extension: ".wav" }
+                },
                 ({ durationMillis }) => {
                     setTimeProgress(durationMillis)
                 }
@@ -109,9 +118,10 @@ const RecordModal = ({ setRecordModalVisible }) => {
             FileSystem.readAsStringAsync(recordFilePath, {
                 encoding: 'base64'
             })
-                .then(res => {
-                    // TODO: send post request to daniel here
-                    console.log(res)
+                .then(async (b64Str) => {
+                    console.log(b64Str)
+                    let response = await postVoiceMsg(store.getState().userInfo.elderlyId, b64Str)
+                    console.log(response, 'sent voice message response')
 
                     setIsSending(false)
 

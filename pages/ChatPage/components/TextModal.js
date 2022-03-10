@@ -6,13 +6,8 @@ import { Gesture, GestureDetector, Directions } from 'react-native-gesture-handl
 import { useStore } from 'react-redux';
 
 import { announceMessage } from '../../../utils';
-import SuccessAlert from '../../../components/general/SuccessAlert';
+import SuccessAlert from '../../../components/SuccessAlert';
 
-const milisToTimestr = (milis) => {
-    let mins = (Math.trunc((milis / 1000) / 60)).toString()
-    let s = (Math.trunc(milis / 1000) - (mins * 60)).toString()
-    return `${mins.length == 1 ? '0' + mins : mins}:${s.length == 1 ? '0' + s : s}`
-}
 
 const TextModal = ({ setTextModalVisible }) => {
     const [isSending, setIsSending] = useState(false)
@@ -20,25 +15,22 @@ const TextModal = ({ setTextModalVisible }) => {
     const [isSuccess, setIsSuccess] = useState(false)
     const store = useStore()
 
-    function sendRecord() {
+    const sendRecord = async () => {
         if (inputTxt != undefined) {
             setIsSending(true)
-            let userId = store.getState().userInfo.userId
+            let userId = store.getState().userInfo.elderlyId
 
-            announceMessage(userId, inputTxt)
-                .then(res => {
-                    console.log(res)
-                    if (res.success) {
-                        console.log(res.msg)
-                        setInputTxt('')
-                        setIsSuccess(true)
+            let res = await announceMessage(userId, inputTxt)
+            if (res.success && res.data.status == 200) {
+                console.log(res.data)
+                setInputTxt('')
+                setIsSuccess(true)
+            } else {
+                setIsSuccess(false)
+                console.log('ERROR', res.data)
+            }
+            setIsSending(false)
 
-                    } else {
-                        setIsSuccess(false)
-                        console.log('ERROR', res.msg)
-                    }
-                    setIsSending(false)
-                })
         }
     }
 
@@ -59,8 +51,8 @@ const TextModal = ({ setTextModalVisible }) => {
                     msg="Your message has been successfully delivered! :D"
                     setIsShown={setIsSuccess} />}
 
-                {(!isSending && !isSuccess) && <Text>Failed to send. Try again later.</Text>
-
+                {(!isSending && !isSuccess) &&
+                    <Text>Failed to send. Try again later.</Text>
                 }
 
                 <Box

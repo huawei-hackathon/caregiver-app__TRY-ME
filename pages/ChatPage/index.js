@@ -14,27 +14,45 @@ import TextModal from './components/TextModal';
 
 const ChatStack = createNativeStackNavigator()
 
-const ChatBubble = ({ chatText, date, isMe, audioFile }) => {
+const ChatBubble = ({ chatText, date, isMe, audioFile, soundObject }) => {
     const [audioLoading, setAudioLoading] = useState(false)
+    const [isPlaying, setIsPlaying] = useState(false)
+
     const playAudio = async () => {
         try {
-            setAudioLoading(true)
+            if (!isPlaying) {
+                setAudioLoading(true)
+                await FileSystem.downloadAsync(
+                    audioFile,
+                    FileSystem.documentDirectory + 'audio.wav'
+                )
 
-            await FileSystem.downloadAsync(
-                audioFile,
-                FileSystem.documentDirectory + 'audio.wav'
-            )
+                await soundObject.loadAsync({
+                    uri: FileSystem.documentDirectory + 'audio.wav',
+                })
 
-            const soundObject = new Audio.Sound()
-            await soundObject.loadAsync({
-                uri: FileSystem.documentDirectory + 'audio.wav',
-            })
-            soundObject.playAsync()
+                setIsPlaying(true)
+                soundObject.playAsync()
+                    .then((res) => {
+                        const time = res.durationMillis
+                        // Cheater way to stop audio
+                        setTimeout(() => {
+                            setIsPlaying(false)
+                            soundObject.unloadAsync()
 
+                        }, time)
+                    })
+            } else {
+                console.log('currently playing')
+                soundObject.pauseAsync()
+                setIsPlaying(false)
+                soundObject.unloadAsync()
+            }
             setAudioLoading(false)
         }
         catch (e) {
             console.log(e)
+            setAudioLoading(false)
         }
     }
 
@@ -43,9 +61,9 @@ const ChatBubble = ({ chatText, date, isMe, audioFile }) => {
             bg={isMe ? 'green.200' : 'gray.200'}
             alignSelf={isMe ? 'flex-end' : 'flex-start'}
             w="140px"
-            px={5}
+            px={2}
             pt={2}
-            pb='5'
+            pb={6}
             borderRadius={10}
             my={3}
             mx={2}
@@ -54,44 +72,53 @@ const ChatBubble = ({ chatText, date, isMe, audioFile }) => {
             <Text
                 position="absolute"
                 bottom='1'
-                right='1'
+                left={2}
                 fontSize='2xs'
                 color='gray.500'
             >
-                {dateToTime(date)}
+                {date}
             </Text>
 
-            {audioLoading ?
+            {audioLoading &&
                 <Spinner
                     position="absolute"
-                    bottom='20px'
-                    right='1' /> :
+                    bottom={0}
+                    right='1' />}
+
+            {audioFile &&
                 <Icon
                     as={Ionicons}
-                    name="play-circle-outline"
+                    name={isPlaying ? "pause-circle-outline" : "play-circle-outline"}
                     size="sm"
                     position="absolute"
-                    bottom='20px'
                     right='1'
+                    bottom={0}
                     onPress={async () => {
                         await playAudio()
-                    }} />}
+                    }} />
+            }
+
         </Box>
     )
 }
 
-const ChatReplies = ({ chats }) => {
+const ChatReplies = ({ chats, soundObject }) => {
     const store = useStore()
-    const userId = store.getState().userInfo.userId
+    const userId = store.getState().userInfo.elderlyId
     let prevDate = ''
 
     return (
         <Box w="400px">
             {chats ?
-                chats.map(({ senderId, date, audioFile, text }) => {
-                    if (dateToStr(date).slice(0, -8) !== prevDate) {
-                        return (
-                            <>
+                chats.map(({ author, timestamp, audioLink, text }) => {
+                    let showDate = false
+                    if (prevDate != timestamp.slice(0, 10)) {
+                        showDate = true
+                        prevDate = timestamp.slice(0, 10)
+                    }
+                    return (
+                        <>
+                            {showDate &&
                                 <Center>
                                     <Box
                                         borderRadius={10}
@@ -103,14 +130,21 @@ const ChatReplies = ({ chats }) => {
                                         <Text
                                             fontSize='xs'
                                             textAlign='center'
-                                        >{dateToStr(date).slice(0, -8)}</Text>
+                                        >
+                                            {timestamp.slice(0, 10)}
+                                        </Text>
                                     </Box>
                                 </Center>
-                                <ChatBubble date={date} audioFile={audioFile} chatText={text} isMe={userId === senderId} />
-                            </>
-                        )
-                    }
-                    prevDate = dateToStr(date).slice(0, -8);
+                            }
+
+                            <ChatBubble
+                                date={timestamp.slice(12)}
+                                audioFile={audioLink}
+                                chatText={text}
+                                isMe={author === 'caregiver'}
+                                soundObject={soundObject} />
+                        </>
+                    )
                 }) :
                 <Text
                     textAlign='center'
@@ -123,20 +157,22 @@ const ChatReplies = ({ chats }) => {
 }
 
 let ChatComponent = ({ chats, userId, updateChat }) => {
+
     const [recordModalVisible, setRecordModalVisible] = useState(false)
     const [textModalVisible, setTextModalVisible] = useState(false)
+    const [soundObject, setSoundObject] = useState(new Audio.Sound())
 
     const scrollViewRef = useRef();
 
     useEffect(() => {
-        setInterval(() => {
-            getConvo(userId)
-                .then(res => {
-                    updateChat(res.data)
-                })
-                .catch(err => {
-                    console.log(err)
-                })
+        setInterval(async () => {
+            let res = await getConvo(userId)
+            if (res.success) {
+                updateChat(res.data)
+            }
+            else {
+                console.log(res.data)
+            }
         }, 1000)
     }, [])
 
@@ -150,17 +186,19 @@ let ChatComponent = ({ chats, userId, updateChat }) => {
             }
 
 
-            <Center my={3} position="absolute" top={5} zIndex={-1} w='100%'
+            <Center mb={3} position="absolute" zIndex={-1} w='100%'
                 opacity={(recordModalVisible || textModalVisible) ? 30 : 100}>
 
                 <Center>
-                    <ScrollView w='100%' h='500px' my={3}
+                    <ScrollView w='100%' h='550px'
                         bg="gray.300"
                         ref={scrollViewRef}
                         onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
                     >
-
-                        <ChatReplies chats={chats} />
+                        {
+                            chats &&
+                            <ChatReplies chats={chats} soundObject={soundObject} />
+                        }
 
                     </ScrollView>
                     <Box
@@ -169,14 +207,14 @@ let ChatComponent = ({ chats, userId, updateChat }) => {
                         justifyContent='space-between'
                         w='300px'
                     >
-                        <Button w="130px" h="60px" colorScheme='amber'
+                        <Button w="130px" h="60px" colorScheme='primary'
                             leftIcon={<Icon as={Ionicons} name="megaphone-outline" size="sm" />}
                             onPress={() => { setRecordModalVisible(true) }}
                         >
                             Speech
                         </Button>
 
-                        <Button w="130px" h="60px" colorScheme='amber'
+                        <Button w="130px" h="60px" colorScheme='primary'
                             leftIcon={<Icon as={Ionicons} name="phone-portrait-outline" size="sm" />}
                             onPress={() => { setTextModalVisible(true) }}
                         >
@@ -193,13 +231,13 @@ let ChatComponent = ({ chats, userId, updateChat }) => {
 
 const mapStateToProps = (state) => {
     return {
-        userId: state.userInfo.userId,
-        chat: state.chat || []
+        userId: state.userInfo.elderlyId,
+        chats: state.chat
     }
 }
 const mapDispatchToProps = (dispatch) => {
     return {
-        updateChat: (pl) => dispatch({ type: 'update/chat', payload: pl })
+        updateChat: (pl) => dispatch({ type: 'update/chat', payload: { data: pl } })
     }
 }
 

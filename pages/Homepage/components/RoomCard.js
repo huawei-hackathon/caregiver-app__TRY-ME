@@ -7,6 +7,7 @@ function RoomCard() {
    const [sinceTime, setSinceTime] = useState()
 
    useEffect(() => {
+      // TODO: Link with backend for location (roomcard)
       setCurrentRoom('Kitchen')
       setSinceTime(new Date())
    }, [])

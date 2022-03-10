@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Animated } from 'react-native';
-import { Heading, Text, Pressable, Box, Center, HStack, VStack, Spinner } from 'native-base'
-import { useStore, connect } from 'react-redux';
+import { Heading, Text, Pressable, Box, Center, HStack, VStack } from 'native-base'
 
-import ChartComponent from './Chart';
-import { dateToDaysAndTime, getData } from '../../../../utils';
+import ChartComponent from './chart';
+import { dateToDaysAndTime, getData, dateToTime, getTickVal, getCategories } from '../../../utils';
+import { connect, useStore } from 'react-redux';
 
 const TabBar = ({ nav, position, setPos }) => {
     return (
@@ -57,8 +57,12 @@ const getMockData = ({ type }) => {
 
     if (type === 'D') {
         let val
+        let categories = []
+
         for (let i = 0; i < 24; i++) {
-            val = Math.round(Math.random() * 100 + 50)
+            categories.push(`${i}:00`)
+
+            val = Math.round(Math.random() * 1000 + 2000 + i * 200)
             data.push({
                 x: i,
                 y: val
@@ -68,18 +72,14 @@ const getMockData = ({ type }) => {
 
         return {
             data,
-            tickValues: [0, 6, 12, 18, 23],
-            theme: {
-                labels: {
-                    formatter: (v) => v.toFixed(2)
-                }
-            },
-            average: total / 24,
+            categories,
+            stepDisp: total / 24,
+            tickValues: [0, 6, 12, 18, 23]
         }
     }
     else if (type === 'W') {
         for (let i = 0; i < 7; i++) {
-            val = Math.round(Math.random() * 100 + 50)
+            val = Math.round(Math.random() * 400 + 9500)
             data.push({
                 x: i,
                 y: val
@@ -91,16 +91,17 @@ const getMockData = ({ type }) => {
 
         return {
             data,
-            tickValues: [0, 3, 6],
-            theme: {
-                formatter: (d) => dayArr[d]
-            },
-            average: total / 7,
+            categories: dayArr,
+            stepDisp: total / 7,
+            tickValues: [0, 1, 2, 3, 4, 5, 6,]
         }
     }
     else if (type === 'M') {
-        for (let i = 1; i <= 31; i++) {
-            val = Math.round(Math.random() * 100 + 50)
+        let categories = []
+
+        for (let i = 0; i < 31; i++) {
+            categories.push(i + 1)
+            val = Math.round(Math.random() * 400 + 9500)
             data.push({
                 x: i,
                 y: val
@@ -110,14 +111,14 @@ const getMockData = ({ type }) => {
 
         return {
             data,
-            tickValues: [1, 15, 30],
-            average: total / 31,
-
+            categories,
+            stepDisp: total / 31,
+            tickValues: [0, 9, 19, 29]
         }
     }
     else if (type === 'Y') {
         for (let i = 0; i < 12; i++) {
-            val = Math.round(Math.random() * 100 + 50)
+            val = Math.round(Math.random() * 400 + 9500)
             data.push({
                 x: i,
                 y: val
@@ -130,42 +131,38 @@ const getMockData = ({ type }) => {
 
         return {
             data,
-            tickValues: [1, 6, 12],
-            theme: {
-                formatter: (m) => monArr[m]
-            },
-            average: total / 12,
+            categories: monArr,
+            stepDisp: total / 12,
+            tickValues: [0, 2, 5, 8, 11]
         }
     }
 }
 
+
 const navObjs = ['D', 'W', 'M', 'Y']
 
-let HeartRatePage = ({ userId, data }) => {
+let StepcountPage = ({ data }) => {
+    const pageMap = ["D", "W", "M", "Y"]
     const store = useStore()
 
-    const pageMap = ["D", "W", "M", "Y"]
     const [page, setPage] = useState(0)
-    const [tickValTmp, setTickValues] = useState()
-    const [averageBpm, setAverageBpm] = useState(-1)
-    const [theme, setTheme] = useState({})
+    const [categories, setCategories] = useState([])
+    const [stepsToday, setStepsToday] = useState(-1)
+    const [tickValues, setTickValues] = useState([])
 
     const [lastUpdate, setLastUpdate] = useState('')
     const [lastUpdateVal, setLastUpdateVal] = useState('')
-    const [loading, setLoading] = useState(false)
-    const [isErr, setIsErr] = useState(false)
-    console.log(data, 'HEARTPAGE DATA')
 
     useEffect(async () => {
         let arr = ['W', 'M', 'Y']
-        let heartRateData
+        let stepCountData
 
         for (let i = 0; i < arr.length; i++) {
             console.log(data[arr[i]])
             if (data[arr[i]].length == 0) {
-                heartRateData = await getData('heartRate', arr[i], store.getState().userInfo.elderlyId)
-                if (heartRateData.success) {
-                    store.dispatch({ type: `update/heartData/${arr[i]}`, payload: { data: heartRateData.data } })
+                stepCountData = await getData('stepCount', arr[i], store.getState().userInfo.elderlyId)
+                if (stepCountData.success) {
+                    store.dispatch({ type: `update/stepData/${arr[i]}`, payload: { data: stepCountData.data } })
                 }
             }
         }
@@ -174,24 +171,20 @@ let HeartRatePage = ({ userId, data }) => {
     useEffect(() => {
         const d = new Date()
         setLastUpdate(dateToDaysAndTime(d))
-        setLastUpdateVal(54)
-        const tickValMap = {
-            'D': [0, 6, 12, 18, 23],
-            'W': [0, 3, 6],
-            'M': [1, 15, 30],
-            'Y': [1, 6, 12]
+        setLastUpdateVal(5000)
+        setCategories(getCategories(pageMap[page]))
+        setTickValues(getTickVal(pageMap[page]))
+
+        if (data && page == 0) {
+            setStepsToday(data[pageMap[page]].slice(-1)[0].y)
+        } else if (data) {
+            let t = 0, d = 0
+            data[pageMap[page]].map(({ x, y }) => {
+                t += y
+                d += 1
+            })
+            setStepsToday(t / d)
         }
-        setTickValues(tickValMap[pageMap[page]])
-        setAverageBpm(10)
-
-        let total = 0
-        let toDiv = 0
-        data[pageMap[page]].map(({ x, y }) => {
-            total += y
-            toDiv += 1
-        })
-
-        setAverageBpm(Math.round(total / toDiv))
     }, [page])
 
     return (
@@ -205,45 +198,43 @@ let HeartRatePage = ({ userId, data }) => {
                     />
                 </Box>
 
-                {/* {(chartData) ? <Text>chart</Text> : <Text>No chart</Text>} */}
-                {(data[pageMap[page]].length > 0) ? <>
-                    <VStack pl={3}>
-                        <Text bold pt={3} color='gray.400'>AVERAGE</Text>
-                        <HStack alignItems='center'>
-                            <Heading>{averageBpm}</Heading>
-                            <Text bold pl={1} color='gray.400'>bpm</Text>
-                        </HStack>
-                    </VStack>
+                <VStack pl={3}>
+                    {page === 0 ?
+                        <Text bold pt={3} color='gray.400'>TOTAL</Text>
+                        : <Text bold pt={3} color='gray.400'>AVERAGE</Text>
+                    }
+                    <HStack alignItems='center'>
+                        <Heading>{stepsToday}</Heading>
+                        <Text bold pl={1} color='gray.400'>steps</Text>
+                    </HStack>
+                </VStack>
 
+
+                {(data) &&
                     <ChartComponent
                         chartData={data[pageMap[page]]}
-                        tickValues={tickValTmp}
-                        theme={theme} />
+                        categories={categories}
+                        tickValues={tickValues} />
+                }
 
-                    <Box m={5} p={4} bg="gray.200" borderRadius={10}>
-                        <HStack justifyContent='space-between'>
-                            <Text>{lastUpdate}</Text>
-                            <Text>
-                                <Text bold>{lastUpdateVal} </Text>
-                                BPM
-                            </Text>
-                        </HStack>
-                    </Box>
-                </> : <></>}
-
-                {loading && <Spinner />}
-                {isErr && <Text>An error occured. Try again later.</Text>}
+                <Box m={5} p={4} bg="gray.200" borderRadius={10}>
+                    <HStack justifyContent='space-between'>
+                        <Text>{lastUpdate}</Text>
+                        <Text>
+                            <Text bold>{lastUpdateVal} </Text>
+                            steps
+                        </Text>
+                    </HStack>
+                </Box>
             </VStack>
         </Center >
     )
 }
 
-
 const mapStateToProps = (state) => {
     return {
-        userId: state.userInfo.elderlyId,
-        data: state.heartData
+        data: state.stepData
     }
 }
 
-export default connect(mapStateToProps)(HeartRatePage)
+export default connect(mapStateToProps)(StepcountPage)

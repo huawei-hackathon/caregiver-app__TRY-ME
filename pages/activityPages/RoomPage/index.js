@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Text, Box, Center, Heading, HStack, Spinner } from 'native-base'
 
-import { dateToTime } from '../../../../utils'
+import { dateToTime } from '../../../utils'
 
 const getData = () => {
    let roomData = [

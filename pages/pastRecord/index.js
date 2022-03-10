@@ -22,11 +22,15 @@ const RecordPageCont = () => {
 
     const store = useStore()
 
-    useEffect(async () => {
+    const getUri = async () => {
         let res = await getReport(store.getState().userInfo.elderlyId)
         if (res.success) {
             setReportUri(res.msg)
         }
+    }
+
+    useEffect(async () => {
+        getUri()
     }, [])
 
     return (
@@ -52,7 +56,10 @@ const RecordPageCont = () => {
 
                     <Button
                         mt={4}
-                        onPress={() => { setCodeVisible(true) }}
+                        onPress={() => {
+                            getUri()
+                            setCodeVisible(true)
+                        }}
                     >
                         Doctor Report
                     </Button>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Text, Box, Center, HStack, AspectRatio, Image, Stack, Heading, Badge } from 'native-base'
+import { Text, Box, Center, HStack, AspectRatio, Image, Stack, Heading, Badge, Spinner } from 'native-base'
+import { connect } from 'react-redux';
 
 import { getHAgo, dateToDaysAndTime } from '../../../utils';
 
@@ -38,15 +39,12 @@ const ContentList = ({ contList }) => {
     )
 }
 
-const FoodCard = () => {
-    const [lastMealTime, setLastMealTime] = useState('')
-    const [foodImgUri, setFoodImgUri] = useState('')
+const FoodCard = ({ data }) => {
     const [badgeColor, setBadgeColor] = useState('')
     const [lastFoodConts, setLastFoodConts] = useState([])
+    let lastMealTime = new Date(`${data.date}T${data.time}`)
 
     useEffect(() => {
-        setLastMealTime(new Date())
-        setFoodImgUri('https://media.istockphoto.com/photos/top-view-table-full-of-food-picture-id1220017909?k=20&m=1220017909&s=170667a&w=0&h=4I_l8ZyiZ8sebPsRo6UpFmdrV-MZgEvxb3smE-TbgLE=')
         setLastFoodConts([
             {
                 'type': 'Carb',
@@ -68,7 +66,6 @@ const FoodCard = () => {
     }, [])
 
     useEffect(() => {
-        console.log('lm', lastMealTime)
         if (lastMealTime !== '') {
             console.log('h', getHAgo(lastMealTime))
             if (getHAgo(lastMealTime) > 8) {
@@ -100,27 +97,34 @@ const FoodCard = () => {
                     </Heading>
 
                     <HStack space={1}>
-
                         {
-                            (lastMealTime) ?
-                                <Text fontSize='md' color="gray.600" bold>
-                                    {dateToDaysAndTime(lastMealTime)}
-                                </Text>
-                                // <Badge colorScheme={badgeColor}></Badge>
-                                : <></>
+                            (data.date) &&
+                            <Text fontSize='md' color="gray.600" bold>
+                                {dateToDaysAndTime(lastMealTime)}
+                            </Text>
+                        }
+                        {
+                            (!data.loaded) &&
+                            <Spinner />
+                        }
+                        {
+                            data.loaded && !data.date &&
+                            <Text>No meal data found.</Text>
                         }
                     </HStack>
 
                     <HStack width="100%" justifyContent='space-between'>
                         <Box shadow={2} w="160" h="160" justifyContent="center">
-                            <Image source={{
-                                uri: foodImgUri
-                            }}
-                                alt="Alternate Text"
-                                w="140"
-                                h="140"
-                                borderRadius={20}
-                            />
+                            {(data ?
+                                <Image source={{
+                                    uri: data.url
+                                }}
+                                    alt="Alternate Text"
+                                    w="140"
+                                    h="140"
+                                    borderRadius={20}
+                                /> : <></>
+                            )}
                         </Box>
 
                         <ContentList contList={lastFoodConts} />
@@ -135,4 +139,10 @@ const FoodCard = () => {
     )
 };
 
-export default FoodCard
+const mapStateToProps = (state) => {
+    return {
+        data: state.lastMealData
+    }
+}
+
+export default connect(mapStateToProps)(FoodCard)
