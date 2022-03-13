@@ -11,15 +11,15 @@ const HeartCard = ({ data }) => {
 
     const [badgeColour, setBadgeColour] = useState('info')
 
-    const getAverageHeartRate = (allData) => {
-        let sum = 0
-        let toDiv = 0
+    const getCurrentHeartRate = (allData) => {
+        let currHeartRate = 0
         allData.map(({ x, y }) => {
-            sum += y
-            toDiv += 1
+            if(x == new Date().getHours()) {
+                currHeartRate = y
+            }
         })
 
-        return sum / toDiv
+        return currHeartRate
     }
 
     return <Box alignItems="center" width='100%'>
@@ -43,7 +43,7 @@ const HeartCard = ({ data }) => {
                             <Text
                                 fontSize='lg'
                                 bold>
-                                {getAverageHeartRate(data)}
+                                {getCurrentHeartRate(data)}
                             </Text>
                             <Text>
                                 bpm

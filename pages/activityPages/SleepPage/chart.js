@@ -12,12 +12,13 @@ const ChartComponent = ({ chartData, categories, tickValues }) => {
     return (
         <VictoryChart
             theme={VictoryTheme.material}
-            domainPadding={20}
+            domainPadding={10}
         >
             <VictoryAxis crossAxis
                 axisLabelComponent={<VictoryLabel dy={20} />}
                 tickValues={tickValues}
                 tickFormat={(t) => categories[t]}
+
             />
             <VictoryAxis dependentAxis
                 domain={[0, 10000]}
@@ -27,9 +28,9 @@ const ChartComponent = ({ chartData, categories, tickValues }) => {
                 }}
             />
             <VictoryBar
-                style={{ data: { fill: "#4337b0" } }}
+                style={{ data: { fill: "#4337b0" }}}
                 data={chartData}
-                alignment='start'
+                alignment='middle'
             />
         </VictoryChart>
     )

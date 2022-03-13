@@ -49,96 +49,6 @@ const TabBar = ({ nav, position, setPos }) => {
         </Box>
     )
 }
-
-const getMockData = ({ type }) => {
-    console.log('type', type)
-    let total = 0
-    let data = []
-
-    if (type === 'D') {
-        let val
-        for (let i = 0; i < 24; i++) {
-            val = Math.round(Math.random() * 100 + 50)
-            data.push({
-                x: i,
-                y: val
-            })
-            total += val
-        }
-
-        return {
-            data,
-            tickValues: [0, 6, 12, 18, 23],
-            theme: {
-                labels: {
-                    formatter: (v) => v.toFixed(2)
-                }
-            },
-            average: total / 24,
-        }
-    }
-    else if (type === 'W') {
-        for (let i = 0; i < 7; i++) {
-            val = Math.round(Math.random() * 100 + 50)
-            data.push({
-                x: i,
-                y: val
-            })
-            total += val
-        }
-
-        const dayArr = ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat']
-
-        return {
-            data,
-            tickValues: [0, 3, 6],
-            theme: {
-                formatter: (d) => dayArr[d]
-            },
-            average: total / 7,
-        }
-    }
-    else if (type === 'M') {
-        for (let i = 1; i <= 31; i++) {
-            val = Math.round(Math.random() * 100 + 50)
-            data.push({
-                x: i,
-                y: val
-            })
-            total += val
-        }
-
-        return {
-            data,
-            tickValues: [1, 15, 30],
-            average: total / 31,
-
-        }
-    }
-    else if (type === 'Y') {
-        for (let i = 0; i < 12; i++) {
-            val = Math.round(Math.random() * 100 + 50)
-            data.push({
-                x: i,
-                y: val
-            })
-            total += val
-        }
-
-        const monArr = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
-
-
-        return {
-            data,
-            tickValues: [1, 6, 12],
-            theme: {
-                formatter: (m) => monArr[m]
-            },
-            average: total / 12,
-        }
-    }
-}
-
 const navObjs = ['D', 'W', 'M', 'Y']
 
 let HeartRatePage = ({ userId, data }) => {
@@ -187,8 +97,10 @@ let HeartRatePage = ({ userId, data }) => {
         let total = 0
         let toDiv = 0
         data[pageMap[page]].map(({ x, y }) => {
-            total += y
-            toDiv += 1
+            if(y > 0){
+                total += y
+                toDiv += 1
+            }
         })
 
         setAverageBpm(Math.round(total / toDiv))

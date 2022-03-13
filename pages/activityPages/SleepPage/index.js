@@ -166,8 +166,10 @@ let SleepPage = ({ data, elderlyId }) => {
         } else if (data) {
             let t = 0, d = 0
             data[pageMap[page]].map(({ x, y }) => {
-                t += y
-                d += 1
+                if(y > 0){
+                    t += y
+                    d += 1
+                }
             })
             setSecSlept(t / d)
         }

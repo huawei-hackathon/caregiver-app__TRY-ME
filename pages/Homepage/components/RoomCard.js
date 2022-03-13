@@ -1,59 +1,64 @@
-import React, { useState, useEffect } from 'react'
-import { Text, Box, Stack, VStack, HStack, Heading, Center } from 'native-base'
-import { dateToStr, dateToTime } from '../../../utils'
-
-function RoomCard() {
-   const [currentRoom, setCurrentRoom] = useState()
-   const [sinceTime, setSinceTime] = useState()
-
-   useEffect(() => {
-      // TODO: Link with backend for location (roomcard)
-      setCurrentRoom('Kitchen')
-      setSinceTime(new Date())
-   }, [])
+import React, { useState, useEffect } from "react";
+import { Text, Box, Stack, VStack, HStack, Heading, Center } from "native-base";
+import { connect } from "react-redux";
 
 
-   return (
-      <Box width="100%" rounded="lg" overflow="hidden" borderColor="coolGray.200" borderWidth="1" _dark={{
-         borderColor: "coolGray.600",
-         backgroundColor: "gray.700"
-      }} _web={{
-         shadow: 2,
-         borderWidth: 0
-      }} _light={{
-         backgroundColor: "gray.50"
-      }}>
-         <Stack p="4" justifyContent='center'>
-            <Stack space={2}>
-               <Heading size="md">
-                  Location📍
-               </Heading>
-            </Stack>
-
-            <Center h={50} w='100%'>
-               <VStack>
-                  {currentRoom != undefined &&
-                     <>
-                        <HStack alignItems="center" space={1}>
-                           <Text
-                              fontSize='lg'>Currently In: </Text>
-                           <Text
-                              bold
-                              fontSize='xl'>{currentRoom}</Text>
-                        </HStack>
-
-                        <Text
-                           fontSize='xs'
-                           color='gray.500'>
-                           Since: {dateToTime(sinceTime)}
-                        </Text>
-                     </>
-                  }
-               </VStack>
-            </Center>
-         </Stack>
-      </Box>
-   )
+const minToHourMin = (m) => {
+  return `${Math.trunc(m/60)}h ${m - (Math.trunc(m/60)*60)}min`
 }
 
-export default RoomCard
+function RoomCard({currRoomData}) {
+
+  // TODO: CHECK IF LOCATION DATA IS CORRECTLY CALLING FROM SERVER
+  return (
+    <Box
+      width="100%"
+      rounded="lg"
+      overflow="hidden"
+      borderColor="coolGray.200"
+      borderWidth="1"
+      _dark={{
+        borderColor: "coolGray.600",
+        backgroundColor: "gray.700",
+      }}
+      _web={{
+        shadow: 2,
+        borderWidth: 0,
+      }}
+      _light={{
+        backgroundColor: "gray.50",
+      }}
+    >
+      <Stack p="4" justifyContent="center">
+        <Stack space={2}>
+          <Heading size="md"> Location📍 </Heading>
+        </Stack>
+        <Center h={50} w="100%">
+          <VStack>
+            {currRoomData && 
+              <>
+                <HStack alignItems="center" space={1}>
+                  <Text fontSize="lg"> Currently In: </Text>
+                  <Text bold fontSize="xl">
+                    {currRoomData.room}
+                  </Text>
+                </HStack>
+                <Text fontSize="xs" color="gray.500" ml={1}>
+                  For: {minToHourMin(currRoomData.timeSpent)}
+                </Text>
+              </>
+            }
+          </VStack>
+        </Center>
+      </Stack>
+    </Box>
+  );
+}
+
+const mapStateToProps = (state) => {
+  return {
+    currRoomData: state.locationData.current
+  }
+}
+
+export default connect(mapStateToProps)(RoomCard)
