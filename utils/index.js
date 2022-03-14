@@ -20,6 +20,7 @@ import {
   deleteFood,
   editFoodGroup,
   addFood,
+  getAnomalies,
 } from "./apiRequests";
 import { getTickVal, getCategories } from "./chartHelper";
 
@@ -46,4 +47,5 @@ export {
   deleteFood,
   editFoodGroup,
   addFood,
+  getAnomalies,
 };

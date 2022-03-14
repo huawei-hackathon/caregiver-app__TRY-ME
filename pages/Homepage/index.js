@@ -3,7 +3,6 @@ import {
   Text,
   Box,
   Center,
-  Heading,
   HStack,
   VStack,
   Pressable,
@@ -26,10 +25,15 @@ import HeartRatePage from "../activityPages/HeartPage";
 import StepcountPage from "../activityPages/StepcountPage";
 import SleepPage from "../activityPages/SleepPage";
 import MealPage from "../activityPages/MealPage";
-import RoomPage from "../activityPages/RoomPage";
 
 // Utils
-import { dateToStr, getData, getLastmeal, getLocation } from "../../utils";
+import {
+  dateToStr,
+  getData,
+  getLastmeal,
+  getLocation,
+  getAnomalies,
+} from "../../utils";
 
 const HomeStack = createNativeStackNavigator();
 
@@ -40,6 +44,8 @@ let HomePageContent = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
 
   const getAllData = async () => {
+    store.dispatch({ type: "refresh" });
+
     let heartRateData = await getData(
       "heartRate",
       "D",
@@ -106,6 +112,19 @@ let HomePageContent = ({ navigation }) => {
           room: locData.data.roomName,
           timeSpent: locData.data.timespent,
         },
+      });
+    }
+
+    let anomalyData = await getAnomalies(store.getState().userInfo.elderlyId);
+    if (anomalyData.success) {
+      anomalyData.data.map(({ healthInfoType, anomalies }) => {
+        store.dispatch({
+          type: "update/anomaly",
+          payload: {
+            healthInfoType,
+            anomalies,
+          },
+        });
       });
     }
   };
@@ -210,7 +229,6 @@ const HomePage = () => {
       <HomeStack.Screen name="Step Count" component={StepcountPage} />
       <HomeStack.Screen name="Sleep" component={SleepPage} />
       <HomeStack.Screen name="Meals" component={MealPage} />
-      <HomeStack.Screen name="Location" component={RoomPage} />
     </HomeStack.Navigator>
   );
 };

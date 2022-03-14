@@ -1,7 +1,7 @@
 let baseUrl = "http://119.13.104.214:80";
 const axios = require("axios");
 
-// PROFILE REQUESTS
+// PROFILE
 const tryLogin = async (username, password) => {
   try {
     let res = await axios.post(`${baseUrl}/users/authenticateCaregiver`, {
@@ -39,25 +39,7 @@ const getUserInfo = async (username) => {
   }
 };
 
-const announceMessage = async (userId, text) => {
-  try {
-    let response = await axios.post(`${baseUrl}/announceMessage`, {
-      userId: userId,
-      text: text,
-    });
-
-    return {
-      success: true,
-      data: response,
-    };
-  } catch (e) {
-    return {
-      success: false,
-      data: e,
-    };
-  }
-};
-
+// DASHBOARD UPDATE
 const getData = async (type, interval, userId, dateInp) => {
   const date = new Date().toISOString().slice(0, 10);
   const map = {
@@ -76,6 +58,42 @@ const getData = async (type, interval, userId, dateInp) => {
     return {
       success: true,
       data: res.data,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      data: e,
+    };
+  }
+};
+
+const getLocation = async (userId) => {
+  try {
+    let response = await axios.post(`${baseUrl}/currentLocation`, {
+      userId,
+    });
+
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      data: e,
+    };
+  }
+};
+
+const getAnomalies = async (userId) => {
+  try {
+    let response = await axios.post(`${baseUrl}/getAnomalies`, {
+      userId,
+    });
+
+    return {
+      success: true,
+      data: response.data,
     };
   } catch (e) {
     return {
@@ -122,24 +140,26 @@ const postVoiceMsg = async (userId, audio) => {
   }
 };
 
-const getReport = async (userId) => {
+const announceMessage = async (userId, text) => {
   try {
-    let res = await axios.post(`${baseUrl}/generateReport`, {
-      userId,
+    let response = await axios.post(`${baseUrl}/announceMessage`, {
+      userId: userId,
+      text: text,
     });
+
     return {
       success: true,
-      msg: `http://119.13.104.214:80/getReport/${res.data.id}`,
+      data: response,
     };
   } catch (e) {
-    console.log("GET REPORT ERR:", e);
     return {
       success: false,
-      msg: e,
+      data: e,
     };
   }
 };
 
+// FOOD UPDATE
 const getLastmeal = async (userId) => {
   try {
     let res = await axios.post(`${baseUrl}/food/lastMeal`, {
@@ -176,24 +196,6 @@ const getDateMeal = async (
     };
   } catch (e) {
     console.log("GET REPORT ERR:", e);
-    return {
-      success: false,
-      data: e,
-    };
-  }
-};
-
-const getLocation = async (userId) => {
-  try {
-    let response = await axios.post(`${baseUrl}/currentLocation`, {
-      userId,
-    });
-
-    return {
-      success: true,
-      data: response.data,
-    };
-  } catch (e) {
     return {
       success: false,
       data: e,
@@ -258,6 +260,25 @@ const addFood = async (mealId, foodName, correctFoodGroup) => {
   }
 };
 
+// REPORT UPDATE
+const getReport = async (userId) => {
+  try {
+    let res = await axios.post(`${baseUrl}/generateReport`, {
+      userId,
+    });
+    return {
+      success: true,
+      msg: `http://119.13.104.214:80/getReport/${res.data.id}`,
+    };
+  } catch (e) {
+    console.log("GET REPORT ERR:", e);
+    return {
+      success: false,
+      msg: e,
+    };
+  }
+};
+
 module.exports = {
   announceMessage,
   tryLogin,
@@ -272,4 +293,5 @@ module.exports = {
   deleteFood,
   editFoodGroup,
   addFood,
+  getAnomalies,
 };

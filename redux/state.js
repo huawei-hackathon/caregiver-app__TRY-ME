@@ -1,5 +1,5 @@
 let initState = {
-  login: false,
+  login: true,
   userInfo: {
     name: "Elizabeth Khua",
     userId: "155",
@@ -36,6 +36,9 @@ let initState = {
     loaded: false,
   },
   chat: [],
+  anomalies: {
+    loaded: false,
+  },
 };
 
 export default initState;

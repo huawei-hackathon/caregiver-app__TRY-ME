@@ -14,7 +14,7 @@ import {
 
 import { dateToDaysAndTime, getDateMeal } from "../../../utils";
 import { MealConts, OneMealImage } from "./OnemealComponents";
-import { DatePicker } from "./components/Datepicker";
+import { DatePicker } from "./Datepicker";
 import { useStore } from "react-redux";
 
 const initialLayout = {

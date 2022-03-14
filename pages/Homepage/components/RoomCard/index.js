@@ -2,14 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Text, Box, Stack, VStack, HStack, Heading, Center } from "native-base";
 import { connect } from "react-redux";
 
-
 const minToHourMin = (m) => {
-  return `${Math.trunc(m/60)}h ${m - (Math.trunc(m/60)*60)}min`
-}
+  return `${Math.trunc(m / 60)}h ${m - Math.trunc(m / 60) * 60}min`;
+};
 
-function RoomCard({currRoomData}) {
-
-  // TODO: CHECK IF LOCATION DATA IS CORRECTLY CALLING FROM SERVER
+function RoomCard({ currRoomData }) {
   return (
     <Box
       width="100%"
@@ -35,7 +32,7 @@ function RoomCard({currRoomData}) {
         </Stack>
         <Center h={50} w="100%">
           <VStack>
-            {currRoomData && 
+            {currRoomData && (
               <>
                 <HStack alignItems="center" space={1}>
                   <Text fontSize="lg"> Currently In: </Text>
@@ -47,7 +44,7 @@ function RoomCard({currRoomData}) {
                   For: {minToHourMin(currRoomData.timeSpent)}
                 </Text>
               </>
-            }
+            )}
           </VStack>
         </Center>
       </Stack>
@@ -57,8 +54,8 @@ function RoomCard({currRoomData}) {
 
 const mapStateToProps = (state) => {
   return {
-    currRoomData: state.locationData.current
-  }
-}
+    currRoomData: state.locationData.current,
+  };
+};
 
-export default connect(mapStateToProps)(RoomCard)
+export default connect(mapStateToProps)(RoomCard);
