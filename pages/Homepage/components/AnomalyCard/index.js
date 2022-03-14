@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Text,
-  Box,
-  Stack,
-  Heading,
-  Spinner,
-  Popover,
-  Skeleton,
-  HStack,
-} from "native-base";
+import { Text, Box, Stack, Heading, Skeleton, HStack } from "native-base";
 import { connect } from "react-redux";
 
 import AnomalyPopover from "./AnomalyPopover";
@@ -55,20 +46,19 @@ const AnomalyCard = ({ data }) => {
           <Heading size="md">Anomalies⚠️</Heading>
 
           <Skeleton.Text
-            lines={5}
+            lines={4}
             my={3}
             isLoaded={data.loaded}
             startColor="amber.100"
             endColor="gray.200"
           >
-            <Box h="150px" justifyContent="center">
+            <Box h="130px" justifyContent="center">
               <AnomalyBlock
                 anomalyData={data.stepAsymmetry}
                 type="Step Asymmetry"
               />
               <AnomalyBlock anomalyData={data.heartRate} type="Heart Rate" />
               <AnomalyBlock anomalyData={data.stepCount} type="Step Count" />
-              <AnomalyBlock anomalyData={data.sleepSeconds} type="Sleep" />
             </Box>
           </Skeleton.Text>
 

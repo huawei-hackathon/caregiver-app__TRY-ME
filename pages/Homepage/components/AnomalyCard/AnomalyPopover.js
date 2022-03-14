@@ -4,15 +4,18 @@ import { Popover, Text, Pressable } from "native-base";
 import { dateToDaysAndTime } from "../../../../utils";
 
 const AnomalyPopover = ({ anomalyData, anomalyType }) => {
+  console.log(anomalyData, anomalyType);
   return (
     <Popover
       trigger={(triggerProps) => {
         return (
           <Pressable {...triggerProps}>
-            <Text color="amber.600" underline>
-              {anomalyData.length}{" "}
-              {anomalyData.length > 1 ? "anomalies" : "anomaly"}
-            </Text>
+            {anomalyData && (
+              <Text color="amber.600" underline>
+                {anomalyData.length}{" "}
+                {anomalyData.length > 1 ? "anomalies" : "anomaly"}
+              </Text>
+            )}
           </Pressable>
         );
       }}

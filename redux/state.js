@@ -1,5 +1,5 @@
 let initState = {
-  login: true,
+  login: false,
   userInfo: {
     name: "Elizabeth Khua",
     userId: "155",
