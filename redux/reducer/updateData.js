@@ -30,14 +30,8 @@ const updateCurrLocation = (state, action) => {
 
 const updateAnomaly = (state, action) => {
   const isToday = (d1) => {
-    let y = parseInt(d1.slice(0, 4));
-    let m = parseInt(d1.slice(5, 7)) - 1;
-    let d = parseInt(d1.slice(8, 10));
-    let tdy = new Date();
-
-    return (
-      y === tdy.getFullYear() && m === tdy.getMonth() && d === tdy.getDate()
-    );
+    let d1_date = new Date(`${d1.slice(0, 10)}T${d1.slice(11)}`);
+    return new Date().getTime() - d1_date.getTime() < 24 * 3600 * 1000;
   };
 
   return {

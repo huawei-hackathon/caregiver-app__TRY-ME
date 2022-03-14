@@ -1,9 +1,8 @@
 import React from "react";
 import { Popover, Text, Pressable } from "native-base";
+import * as Linking from "expo-linking";
 
-import { dateToDaysAndTime } from "../../../../utils";
-
-const AnomalyPopover = ({ anomalyData, anomalyType }) => {
+const AnomalyPopover = ({ anomalyData, anomalyType, infoUrl }) => {
   console.log(anomalyData, anomalyType);
   return (
     <Popover
@@ -25,20 +24,31 @@ const AnomalyPopover = ({ anomalyData, anomalyType }) => {
         <Popover.CloseButton />
         <Popover.Header>{anomalyType}Anomaly</Popover.Header>
         <Popover.Body>
-          {anomalyData.map(({ date, type, val }) => (
+          {anomalyData.map(({ date, type, val, delta }) => (
             <>
               <Text underline fontSize="md">
-                {dateToDaysAndTime(
-                  new Date(`${date.slice(0, 10)}T${date.slice(11)}`)
-                )}
+                {`${date.slice(0, 10)} ${date.slice(11)}`}
               </Text>
               <Text color="gray.500">
-                {anomalyType} was {val}, which was {type} than normal.
+                {anomalyType} was <Text bold>{val}</Text>, which is{" "}
+                <Text bold>
+                  {Math.abs((delta / val).toFixed(2))}% {type}
+                </Text>{" "}
+                than normal.
               </Text>
             </>
           ))}
         </Popover.Body>
-        <Popover.Footer justifyContent="flex-end"></Popover.Footer>
+        <Popover.Footer justifyContent="flex-start">
+          <Text
+            color="blue.500"
+            onPress={() => {
+              Linking.openURL(infoUrl);
+            }}
+          >
+            Find out more
+          </Text>
+        </Popover.Footer>
       </Popover.Content>
     </Popover>
   );

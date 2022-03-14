@@ -25,7 +25,8 @@ const LoginArea = (props) => {
   const navigation = props.navigation;
   const [username, setUsername] = useState("");
   const [pw, setPw] = useState("");
-  const [errModalShow, setErrModalShow] = useState(false);
+  const [errMessageShow, setErrMessageShow] = useState(true);
+  const [errMessage, setErrMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   let submitHandler = async () => {
@@ -36,12 +37,13 @@ const LoginArea = (props) => {
       console.log(username, pw);
 
       const loginAttempt = await tryLogin(username, pw);
+      console.log(loginAttempt);
 
-      if (loginAttempt.success && loginAttempt.data.status) {
-        let userInfo = await getUserInfo(username);
+      if (loginAttempt.success) {
+        if (loginAttempt.data.status) {
+          let userInfo = await getUserInfo(username);
+          console.log(userInfo);
 
-        if (userInfo.success) {
-          console.log(userInfo.data);
           props.dispatchLogin({
             elderlyInfo: { ...userInfo.data.elderlyInfo },
             name: userInfo.data.name,
@@ -50,14 +52,18 @@ const LoginArea = (props) => {
           });
 
           success = true;
+        } else {
+          setErrMessage("Invalid login.");
         }
+      } else {
+        setErrMessage("Server error. Please ensure username is valid.");
       }
     }
 
     if (!success) {
       setUsername("");
       setPw("");
-      setErrModalShow(true);
+      setErrMessageShow(true);
     }
 
     setLoading(false);
@@ -65,17 +71,6 @@ const LoginArea = (props) => {
 
   return (
     <>
-      {errModalShow ? (
-        <ErrorModal
-          errMsg="Login failed"
-          errDesc="Username or password invalid"
-          style={styles.errModal}
-          setModalShow={setErrModalShow}
-          show={errModalShow}
-        />
-      ) : (
-        <></>
-      )}
       <Box bg="white" shadow={2} w="90%" py="6" px="10">
         <Heading
           size="lg"
@@ -117,6 +112,15 @@ const LoginArea = (props) => {
               placeholder="Enter password"
             />
           </FormControl>
+
+          {errMessageShow ? (
+            <>
+              <Text color="red.600">{errMessage}</Text>
+            </>
+          ) : (
+            <Text></Text>
+          )}
+
           <Button
             mt="2"
             onPress={() => {

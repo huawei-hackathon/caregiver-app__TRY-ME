@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 
 import AnomalyPopover from "./AnomalyPopover";
 
-const AnomalyBlock = ({ anomalyData, type }) => {
+const AnomalyBlock = ({ anomalyData, type, infoUrl }) => {
   return (
     <>
       <HStack mt={2} alignItems="center">
@@ -12,7 +12,11 @@ const AnomalyBlock = ({ anomalyData, type }) => {
           {type}
         </Text>
         {anomalyData && (
-          <AnomalyPopover anomalyData={anomalyData} anomalyType={type} />
+          <AnomalyPopover
+            anomalyData={anomalyData}
+            anomalyType={type}
+            infoUrl={infoUrl}
+          />
         )}
       </HStack>
     </>
@@ -56,9 +60,18 @@ const AnomalyCard = ({ data }) => {
               <AnomalyBlock
                 anomalyData={data.stepAsymmetry}
                 type="Step Asymmetry"
+                infoUrl="https://www.healthline.com/health/unsteady-gait"
               />
-              <AnomalyBlock anomalyData={data.heartRate} type="Heart Rate" />
-              <AnomalyBlock anomalyData={data.stepCount} type="Step Count" />
+              <AnomalyBlock
+                anomalyData={data.heartRate}
+                type="Heart Rate"
+                infoUrl="https://www.healthline.com/health/abnormal-heart-rhythms"
+              />
+              <AnomalyBlock
+                anomalyData={data.stepCount}
+                type="Step Count"
+                infoUrl="https://www.healthline.com/health/fatigue"
+              />
             </Box>
           </Skeleton.Text>
 
