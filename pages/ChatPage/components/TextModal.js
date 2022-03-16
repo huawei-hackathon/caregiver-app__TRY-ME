@@ -22,7 +22,6 @@ import {
 import { useStore } from "react-redux";
 
 import { announceMessage } from "../../../utils";
-import SuccessAlert from "../../../components/SuccessAlert";
 
 const TextModal = ({ setTextModalVisible }) => {
   const [isSending, setIsSending] = useState(false);
