@@ -133,16 +133,6 @@ let HomePageContent = ({ navigation }) => {
       });
     }
 
-    let mealData = await getLastmeal(store.getState().userInfo.elderlyId);
-    if (mealData.success) {
-      store.dispatch({
-        type: "update/lastMealData",
-        payload: {
-          data: { ...mealData.data },
-        },
-      });
-    }
-
     let anomalyData = await getAnomalies(store.getState().userInfo.elderlyId);
     if (anomalyData.success) {
       anomalyData.data.map(({ healthInfoType, anomalies }) => {

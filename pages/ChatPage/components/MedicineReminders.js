@@ -17,10 +17,11 @@ import {
 } from "native-base";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { announceReminder, getAllMedReminders } from "../../../utils";
 import { useStore } from "react-redux";
 
-// TODO: link reminders to darens backend
+import { announceReminder, getAllMedReminders } from "../../../utils";
+
+let prod = false;
 
 const SingleReminder = ({ medicine, time, checked, id, deleteReminder }) => {
   return (
@@ -73,7 +74,7 @@ const CurrReminders = ({ setMedicineReminderVisible }) => {
 
   const store = useStore();
 
-  useEffect(async () => {
+  const getMedFromServer = async () => {
     let r = await getAllMedReminders(store.getState().userInfo.elderlyId);
     let mArr = r.data.data;
     console.log(mArr);
@@ -104,31 +105,33 @@ const CurrReminders = ({ setMedicineReminderVisible }) => {
         );
       });
     });
+  };
 
-    // setReminders({
-    //   Morning: [
-    //     { medicine: "Antibiotics", time: "8:00", checked: true, id: 1 },
-    //     { medicine: "Vitamin C", time: "8:10", checked: true, id: 2 },
-    //     {
-    //       medicine: "High blood pressure medicine",
-    //       time: "8:20",
-    //       checked: false,
-    //       id: 3,
-    //     },
-    //   ],
-    //   Afternoon: [
-    //     {
-    //       medicine: "High blood pressure medicine",
-    //       time: "13:00",
-    //       checked: false,
-    //       id: 4,
-    //     },
-    //     { medicine: "Diabetes medicine", time: "13:10", checked: false, id: 5 },
-    //   ],
-    //   Evening: [
-    //     { medicine: "Antibiotics", time: "19:00", checked: false, id: 6 },
-    //   ],
-    // });
+  useEffect(async () => {
+    setReminders({
+      Morning: [
+        { medicine: "Antibiotics", time: "8:00", checked: true, id: 1 },
+        { medicine: "Vitamin C", time: "8:10", checked: true, id: 2 },
+        {
+          medicine: "High blood pressure medicine",
+          time: "8:20",
+          checked: false,
+          id: 3,
+        },
+      ],
+      Afternoon: [
+        {
+          medicine: "High blood pressure medicine",
+          time: "13:00",
+          checked: false,
+          id: 4,
+        },
+        { medicine: "Diabetes medicine", time: "13:10", checked: false, id: 5 },
+      ],
+      Evening: [
+        { medicine: "Antibiotics", time: "19:00", checked: false, id: 6 },
+      ],
+    });
   }, []);
 
   const handleNewReminder = async () => {
@@ -143,34 +146,55 @@ const CurrReminders = ({ setMedicineReminderVisible }) => {
         timeCat = "Evening";
       }
 
-      let r = await announceReminder(
-        store.getState().userInfo.elderlyId,
-        medicineToAdd,
-        Object.values(chosenTime)
-          .slice(0, numDoses)
-          .map((e) => e.toString().slice(16, 21))
-      );
+      if (prod) {
+        let r = await announceReminder(
+          store.getState().userInfo.elderlyId,
+          medicineToAdd,
+          Object.values(chosenTime)
+            .slice(0, numDoses)
+            .map((e) => e.toString().slice(16, 21))
+        );
 
-      if (r.data != "Already exists") {
-        console.log(r, "new data");
-        setReminders({
-          ...reminders,
-          [timeCat]: [
-            ...reminders[timeCat],
-            {
-              medicine: medicineToAdd,
-              time: `${t.getHours()}:${
-                t.getMinutes().toString().length == 1
-                  ? "0" + t.getMinutes().toString()
-                  : t.getMinutes().toString()
-              }`,
-              checked: false,
-              id: r.data,
-            },
-          ],
-        });
+        if (r.data != "Already exists") {
+          console.log(r, "new data");
+          setReminders({
+            ...reminders,
+            [timeCat]: [
+              ...reminders[timeCat],
+              {
+                medicine: medicineToAdd,
+                time: `${t.getHours()}:${
+                  t.getMinutes().toString().length == 1
+                    ? "0" + t.getMinutes().toString()
+                    : t.getMinutes().toString()
+                }`,
+                checked: false,
+                id: r.data,
+              },
+            ],
+          });
+        } else {
+          console.log("This reminder already exists");
+        }
       } else {
-        console.log("This reminder already exists");
+        setTimeout(() => {
+          setReminders({
+            ...reminders,
+            [timeCat]: [
+              ...reminders[timeCat],
+              {
+                medicine: medicineToAdd,
+                time: `${t.getHours()}:${
+                  t.getMinutes().toString().length == 1
+                    ? "0" + t.getMinutes().toString()
+                    : t.getMinutes().toString()
+                }`,
+                checked: false,
+                id: 9,
+              },
+            ],
+          });
+        }, 200);
       }
     }
   };

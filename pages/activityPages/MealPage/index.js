@@ -72,7 +72,6 @@ const MealPage = () => {
     if (mealsInfo.success && mealsInfo.data.length > 0) {
       setIsEmpty(false);
 
-      console.log(mealsInfo.data);
       let mealInfoTmp = [];
       mealsInfo.data.map((mealObj) => {
         mealInfoTmp.push({
@@ -103,11 +102,12 @@ const MealPage = () => {
         title: `${date}-${time}-meal`,
       });
 
-      renderSceneObjTmp[date] = () => (
-        <>
-          <OneMealImage imgUri={imgUrl} />
-        </>
-      );
+      console.log(imgUrl, "imgurl mealinfo");
+
+      renderSceneObjTmp[date] = () => {
+        console.log(imgUrl, "imgurl");
+        return <OneMealImage imgUrl={imgUrl} />;
+      };
     });
     setRoutes(routeTmp);
     setRenderSceneObj(renderSceneObjTmp);
