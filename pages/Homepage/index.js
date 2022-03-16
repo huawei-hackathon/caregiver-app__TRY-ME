@@ -59,55 +59,55 @@ let HomePageContent = ({ navigation }) => {
     }
 
     // DEMO LIVE
-    // setInterval(async () => {
-    //   let stepData = await getData(
-    //     "stepCount",
-    //     "D",
-    //     store.getState().userInfo.elderlyId
-    //   );
-    //   if (stepData.success) {
-    //     store.dispatch({
-    //       type: "update/stepData/D",
-    //       payload: { data: stepData.data },
-    //     });
-    //   }
-    //   console.log(stepData);
+    setInterval(async () => {
+      let stepData = await getData(
+        "stepCount",
+        "D",
+        store.getState().userInfo.elderlyId
+      );
+      if (stepData.success) {
+        store.dispatch({
+          type: "update/stepData/D",
+          payload: { data: stepData.data },
+        });
+      }
+      console.log(stepData);
 
-    //   let locData = await getLocation(store.getState().userInfo.elderlyId);
-    //   if (locData.success) {
-    //     store.dispatch({
-    //       type: "update/currentLocation",
-    //       payload: {
-    //         room: locData.data.roomName,
-    //         timeSpent: locData.data.timespent,
-    //       },
-    //     });
-    //   }
-    // }, 500);
+      let locData = await getLocation(store.getState().userInfo.elderlyId);
+      if (locData.success) {
+        store.dispatch({
+          type: "update/currentLocation",
+          payload: {
+            room: locData.data.roomName,
+            timeSpent: locData.data.timespent,
+          },
+        });
+      }
+    }, 500);
 
-    let stepData = await getData(
-      "stepCount",
-      "D",
-      store.getState().userInfo.elderlyId
-    );
-    if (stepData.success) {
-      store.dispatch({
-        type: "update/stepData/D",
-        payload: { data: stepData.data },
-      });
-    }
-    console.log(stepData);
+    // let stepData = await getData(
+    //   "stepCount",
+    //   "D",
+    //   store.getState().userInfo.elderlyId
+    // );
+    // if (stepData.success) {
+    //   store.dispatch({
+    //     type: "update/stepData/D",
+    //     payload: { data: stepData.data },
+    //   });
+    // }
+    // console.log(stepData);
 
-    let locData = await getLocation(store.getState().userInfo.elderlyId);
-    if (locData.success) {
-      store.dispatch({
-        type: "update/currentLocation",
-        payload: {
-          room: locData.data.roomName,
-          timeSpent: locData.data.timespent,
-        },
-      });
-    }
+    // let locData = await getLocation(store.getState().userInfo.elderlyId);
+    // if (locData.success) {
+    //   store.dispatch({
+    //     type: "update/currentLocation",
+    //     payload: {
+    //       room: locData.data.roomName,
+    //       timeSpent: locData.data.timespent,
+    //     },
+    //   });
+    // }
 
     let sleepData = await getData(
       "sleepSeconds",
