@@ -58,17 +58,41 @@ let HomePageContent = ({ navigation }) => {
       });
     }
 
-    let stepData = await getData(
-      "stepCount",
-      "D",
-      store.getState().userInfo.elderlyId
-    );
-    if (stepData.success) {
-      store.dispatch({
-        type: "update/stepData/D",
-        payload: { data: stepData.data },
-      });
-    }
+    // DEMO LIVE
+    setInterval(async () => {
+      let stepData = await getData(
+        "stepCount",
+        "D",
+        store.getState().userInfo.elderlyId
+      );
+      if (stepData.success) {
+        store.dispatch({
+          type: "update/stepData/D",
+          payload: { data: stepData.data },
+        });
+      }
+
+      let locData = await getLocation(store.getState().userInfo.elderlyId);
+      if (locData.success) {
+        store.dispatch({
+          type: "update/currentLocation",
+          payload: {
+            room: locData.data.roomName,
+            timeSpent: locData.data.timespent,
+          },
+        });
+      }
+
+      let mealData = await getLastmeal(store.getState().userInfo.elderlyId);
+      if (mealData.success) {
+        store.dispatch({
+          type: "update/lastMealData",
+          payload: {
+            data: { ...mealData.data },
+          },
+        });
+      }
+    }, 1000);
 
     let sleepData = await getData(
       "sleepSeconds",
@@ -91,27 +115,6 @@ let HomePageContent = ({ navigation }) => {
       store.dispatch({
         type: "update/sleepData/W",
         payload: { data: sleepDataW.data },
-      });
-    }
-
-    let mealData = await getLastmeal(store.getState().userInfo.elderlyId);
-    if (mealData.success) {
-      store.dispatch({
-        type: "update/lastMealData",
-        payload: {
-          data: { ...mealData.data },
-        },
-      });
-    }
-
-    let locData = await getLocation(store.getState().userInfo.elderlyId);
-    if (locData.success) {
-      store.dispatch({
-        type: "update/currentLocation",
-        payload: {
-          room: locData.data.roomName,
-          timeSpent: locData.data.timespent,
-        },
       });
     }
 
@@ -213,7 +216,7 @@ let HomePageContent = ({ navigation }) => {
               navigation.navigate("Meals");
             }}
           >
-            <FoodCard />
+            <FoodCard refresh={getAllData} />
           </Pressable>
         </VStack>
       </ScrollView>

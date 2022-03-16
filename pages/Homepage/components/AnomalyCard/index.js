@@ -1,19 +1,10 @@
 import React, { useState, useEffect } from "react";
-import {
-  Text,
-  Box,
-  Stack,
-  Heading,
-  Spinner,
-  Popover,
-  Skeleton,
-  HStack,
-} from "native-base";
+import { Text, Box, Stack, Heading, Skeleton, HStack } from "native-base";
 import { connect } from "react-redux";
 
 import AnomalyPopover from "./AnomalyPopover";
 
-const AnomalyBlock = ({ anomalyData, type }) => {
+const AnomalyBlock = ({ anomalyData, type, infoUrl }) => {
   return (
     <>
       <HStack mt={2} alignItems="center">
@@ -21,7 +12,11 @@ const AnomalyBlock = ({ anomalyData, type }) => {
           {type}
         </Text>
         {anomalyData && (
-          <AnomalyPopover anomalyData={anomalyData} anomalyType={type} />
+          <AnomalyPopover
+            anomalyData={anomalyData}
+            anomalyType={type}
+            infoUrl={infoUrl}
+          />
         )}
       </HStack>
     </>
@@ -55,20 +50,33 @@ const AnomalyCard = ({ data }) => {
           <Heading size="md">Anomalies⚠️</Heading>
 
           <Skeleton.Text
-            lines={5}
+            lines={4}
             my={3}
             isLoaded={data.loaded}
             startColor="amber.100"
             endColor="gray.200"
           >
-            <Box h="150px" justifyContent="center">
+            <Box h="130px" justifyContent="center">
               <AnomalyBlock
                 anomalyData={data.stepAsymmetry}
                 type="Step Asymmetry"
+                infoUrl="https://www.healthline.com/health/unsteady-gait"
               />
-              <AnomalyBlock anomalyData={data.heartRate} type="Heart Rate" />
-              <AnomalyBlock anomalyData={data.stepCount} type="Step Count" />
-              <AnomalyBlock anomalyData={data.sleepSeconds} type="Sleep" />
+              <AnomalyBlock
+                anomalyData={data.heartRate}
+                type="Heart Rate"
+                infoUrl="https://www.healthline.com/health/abnormal-heart-rhythms"
+              />
+              <AnomalyBlock
+                anomalyData={data.stepCount}
+                type="Step Count"
+                infoUrl="https://www.healthline.com/health/fatigue"
+              />
+              <AnomalyBlock
+                anomalyData={data.sleepSeconds}
+                type="Sleep"
+                infoUrl="https://www.healthline.com/health/fatigue"
+              />
             </Box>
           </Skeleton.Text>
 

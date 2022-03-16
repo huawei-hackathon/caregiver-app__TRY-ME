@@ -7,10 +7,8 @@ import {
   FormControl,
   Input,
   Button,
-  HStack,
+  Image,
   Center,
-  Link,
-  View,
 } from "native-base";
 import { connect } from "react-redux";
 
@@ -18,14 +16,14 @@ import { tryLogin, getUserInfo } from "../../utils";
 
 import { useState } from "react";
 import { valPw, valUsername } from "../../utils/helper";
-import { ErrorModal } from "../../components/errorModal";
 import { StyleSheet } from "react-native";
 
 const LoginArea = (props) => {
   const navigation = props.navigation;
   const [username, setUsername] = useState("");
   const [pw, setPw] = useState("");
-  const [errModalShow, setErrModalShow] = useState(false);
+  const [errMessageShow, setErrMessageShow] = useState(true);
+  const [errMessage, setErrMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   let submitHandler = async () => {
@@ -36,12 +34,13 @@ const LoginArea = (props) => {
       console.log(username, pw);
 
       const loginAttempt = await tryLogin(username, pw);
+      console.log(loginAttempt);
 
-      if (loginAttempt.success && loginAttempt.data.status) {
-        let userInfo = await getUserInfo(username);
+      if (loginAttempt.success) {
+        if (loginAttempt.data.status) {
+          let userInfo = await getUserInfo(username);
+          console.log(userInfo);
 
-        if (userInfo.success) {
-          console.log(userInfo.data);
           props.dispatchLogin({
             elderlyInfo: { ...userInfo.data.elderlyInfo },
             name: userInfo.data.name,
@@ -50,33 +49,42 @@ const LoginArea = (props) => {
           });
 
           success = true;
+        } else {
+          setErrMessage("Invalid login.");
         }
+      } else {
+        setErrMessage("Server error. Please ensure username is valid.");
       }
     }
 
     if (!success) {
       setUsername("");
       setPw("");
-      setErrModalShow(true);
+      setErrMessageShow(true);
     }
 
     setLoading(false);
   };
 
   return (
-    <>
-      {errModalShow ? (
-        <ErrorModal
-          errMsg="Login failed"
-          errDesc="Username or password invalid"
-          style={styles.errModal}
-          setModalShow={setErrModalShow}
-          show={errModalShow}
-        />
-      ) : (
-        <></>
-      )}
-      <Box bg="white" shadow={2} w="90%" py="6" px="10">
+    <Box alignContent="center" justifyContent="center" bg="white" shadow={2}>
+      <Image
+        opacity={30}
+        source={require("../../assets/appicongreen.png")}
+        width="350px"
+        height="350px"
+        position="absolute"
+        zIndex={-1}
+        top={0}
+      />
+      <Box
+        w="350px"
+        h="350px"
+        py="6"
+        px="10"
+        zIndex={3}
+        backgroundColor="rgba(255,255,255,0.7)"
+      >
         <Heading
           size="lg"
           fontWeight="600"
@@ -85,7 +93,7 @@ const LoginArea = (props) => {
             color: "warmGray.50",
           }}
         >
-          Welcome 🍓
+          Welcome to Elderberry
         </Heading>
         <Heading
           mt="1"
@@ -117,6 +125,15 @@ const LoginArea = (props) => {
               placeholder="Enter password"
             />
           </FormControl>
+
+          {errMessageShow ? (
+            <>
+              <Text color="red.600">{errMessage}</Text>
+            </>
+          ) : (
+            <Text></Text>
+          )}
+
           <Button
             mt="2"
             onPress={() => {
@@ -128,7 +145,7 @@ const LoginArea = (props) => {
           </Button>
         </VStack>
       </Box>
-    </>
+    </Box>
   );
 };
 

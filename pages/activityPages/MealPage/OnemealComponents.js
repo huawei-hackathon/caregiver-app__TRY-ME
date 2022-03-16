@@ -1,14 +1,22 @@
 import React from "react";
-import { Center, Image, ScrollView, Box } from "native-base";
+import { Center, Image, ScrollView, Box, Spinner } from "native-base";
 
 import ContentList from "../../Homepage/components/FoodCard/ContentList";
 
-const OneMealImage = ({ imgUri }) => {
-  return (
-    <Center flex={1}>
-      <Image source={{ uri: imgUri }} alt="food pic" size="2xl" />
-    </Center>
-  );
+const OneMealImage = ({ imgUrl }) => {
+  if (imgUrl) {
+    return (
+      <Center flex={1}>
+        <Image source={{ uri: imgUrl }} alt="food pic" size="2xl" />
+      </Center>
+    );
+  } else {
+    return (
+      <Center>
+        <Spinner />
+      </Center>
+    );
+  }
 };
 
 const MealConts = ({ contents, mealId, refresh }) => {

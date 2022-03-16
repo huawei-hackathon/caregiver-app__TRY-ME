@@ -1,5 +1,7 @@
 let baseUrl = "http://119.13.104.214:80";
+let tunnelUrl = "http://13ab-121-6-250-53.ngrok.io";
 const axios = require("axios");
+const { createRoutesFromChildren } = require("react-router-native");
 
 // PROFILE
 const tryLogin = async (username, password) => {
@@ -159,6 +161,62 @@ const announceMessage = async (userId, text) => {
   }
 };
 
+const announceReminder = async (userId, medicine, timeToRemind) => {
+  try {
+    let response = await axios.post(`${tunnelUrl}/medicineReminder/new`, {
+      userId: userId,
+      medicine,
+      time: timeToRemind,
+    });
+
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      data: e,
+    };
+  }
+};
+
+const deleteReminder = async (medId) => {
+  try {
+    let response = await axios.post(`${tunnelUrl}/medicineReminder/delete`, {
+      medicineReminderId: medId,
+    });
+
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      data: e,
+    };
+  }
+};
+
+const getAllMedReminders = async (userId) => {
+  try {
+    let response = await axios.post(`${tunnelUrl}/getAllMedicineReminders`, {
+      userId,
+    });
+
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      data: e,
+    };
+  }
+};
+
 // FOOD UPDATE
 const getLastmeal = async (userId) => {
   try {
@@ -266,6 +324,24 @@ const getReport = async (userId) => {
     let res = await axios.post(`${baseUrl}/generateReport`, {
       userId,
     });
+
+    console.log(res.data, "id");
+    return {
+      success: true,
+      data: `http://119.13.104.214:80/getReport/${res.data.id}`,
+    };
+  } catch (e) {
+    console.log("GET REPORT ERR:", e);
+    return {
+      success: false,
+      msg: e,
+    };
+  }
+};
+
+const getMockReport = async () => {
+  try {
+    let res = await axios.get(`${baseUrl}/mockReport`);
     return {
       success: true,
       msg: `http://119.13.104.214:80/getReport/${res.data.id}`,
@@ -294,4 +370,8 @@ module.exports = {
   editFoodGroup,
   addFood,
   getAnomalies,
+  announceReminder,
+  deleteReminder,
+  getAllMedReminders,
+  getMockReport,
 };

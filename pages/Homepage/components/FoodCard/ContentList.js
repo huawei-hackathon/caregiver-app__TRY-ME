@@ -17,7 +17,7 @@ import AddButton from "./AddButton";
 import EditModal from "./EditFoodGroupModal";
 import { deleteFood, editFoodGroup } from "../../../../utils";
 
-function ContentList({ contList, mealId, isLastMeal, refresh }) {
+function ContentList({ contList, mealId, refresh }) {
   const store = useStore();
   const [showEditModal, setShowEditModal] = useState(false);
   const [openIndex, setOpenIndex] = useState(0);
@@ -27,16 +27,8 @@ function ContentList({ contList, mealId, isLastMeal, refresh }) {
     console.log(resp, "food del");
 
     console.log(foodId);
-    if (isLastMeal) {
-      store.dispatch({
-        type: "delete/lastMeal",
-        payload: {
-          foodId: foodId,
-        },
-      });
-    } else {
-      refresh();
-    }
+
+    refresh();
   };
 
   const onRowOpen = (key) => {
@@ -88,7 +80,6 @@ function ContentList({ contList, mealId, isLastMeal, refresh }) {
   };
 
   const renderHiddenItem = (data, rowMap) => {
-    console.log(data.item, "hidden");
     return (
       <HStack flex="1" pl="2">
         {showEditModal && contList && (
@@ -162,7 +153,7 @@ function ContentList({ contList, mealId, isLastMeal, refresh }) {
         />
       </ScrollView>
       <Box mt={10}>
-        <AddButton mealId={mealId} isLastMeal={isLastMeal} refresh={refresh} />
+        <AddButton mealId={mealId} refresh={refresh} />
       </Box>
     </Box>
   );

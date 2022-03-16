@@ -21,6 +21,10 @@ import {
   editFoodGroup,
   addFood,
   getAnomalies,
+  announceReminder,
+  deleteReminder,
+  getAllMedReminders,
+  getMockReport,
 } from "./apiRequests";
 import { getTickVal, getCategories } from "./chartHelper";
 
@@ -48,4 +52,8 @@ export {
   editFoodGroup,
   addFood,
   getAnomalies,
+  announceReminder,
+  deleteReminder,
+  getAllMedReminders,
+  getMockReport,
 };

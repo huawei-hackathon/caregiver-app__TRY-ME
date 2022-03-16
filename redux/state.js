@@ -1,11 +1,11 @@
 let initState = {
-  login: true,
+  login: false,
   userInfo: {
-    name: "Elizabeth Khua",
-    userId: "155",
-    username: "ElizabethKhua69",
-    elderlyId: "116",
-    password: "Nullpassword",
+    name: "",
+    userId: "",
+    username: "",
+    elderlyId: "",
+    password: "",
   },
   elderlyInfo: {},
   heartData: {

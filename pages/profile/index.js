@@ -23,7 +23,6 @@ let ProfilePageConts = ({ myInfo, elderlyInfo, updateEInfo, username }) => {
   useEffect(() => {
     getUserInfo(username).then((res) => {
       if (res.success) {
-        console.log(res.msg);
         for (let prop in res.msg.elderlyInfo) {
           updateEInfo(prop, res.msg.elderlyInfo[prop]);
         }
