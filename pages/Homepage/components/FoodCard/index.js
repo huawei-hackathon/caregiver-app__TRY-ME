@@ -14,8 +14,11 @@ const FoodCard = () => {
       setData(mealData.data);
     }
   };
+
   useEffect(() => {
-    getDataFromServer();
+    setInterval(() => {
+      getDataFromServer();
+    }, 1000);
   }, []);
 
   return (
