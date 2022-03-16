@@ -58,17 +58,31 @@ let HomePageContent = ({ navigation }) => {
       });
     }
 
-    let stepData = await getData(
-      "stepCount",
-      "D",
-      store.getState().userInfo.elderlyId
-    );
-    if (stepData.success) {
-      store.dispatch({
-        type: "update/stepData/D",
-        payload: { data: stepData.data },
-      });
-    }
+    setInterval(async () => {
+      let stepData = await getData(
+        "stepCount",
+        "D",
+        store.getState().userInfo.elderlyId
+      );
+      if (stepData.success) {
+        store.dispatch({
+          type: "update/stepData/D",
+          payload: { data: stepData.data },
+        });
+      }
+      console.log(stepData);
+
+      let locData = await getLocation(store.getState().userInfo.elderlyId);
+      if (locData.success) {
+        store.dispatch({
+          type: "update/currentLocation",
+          payload: {
+            room: locData.data.roomName,
+            timeSpent: locData.data.timespent,
+          },
+        });
+      }
+    }, 500);
 
     let sleepData = await getData(
       "sleepSeconds",
@@ -100,17 +114,6 @@ let HomePageContent = ({ navigation }) => {
         type: "update/lastMealData",
         payload: {
           data: { ...mealData.data },
-        },
-      });
-    }
-
-    let locData = await getLocation(store.getState().userInfo.elderlyId);
-    if (locData.success) {
-      store.dispatch({
-        type: "update/currentLocation",
-        payload: {
-          room: locData.data.roomName,
-          timeSpent: locData.data.timespent,
         },
       });
     }

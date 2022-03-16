@@ -12,27 +12,45 @@ import {
   CloseIcon,
   Input,
   Select,
+  CheckCircleIcon,
+  Icon,
 } from "native-base";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { announceReminder, getAllMedReminders } from "../../../utils";
+import { useStore } from "react-redux";
 
-const SingleReminder = ({ medicine, time, checked }) => {
+// TODO: link reminders to darens backend
+
+const SingleReminder = ({ medicine, time, checked, id, deleteReminder }) => {
   return (
     <Box w="100%" bg="gray.50" shadow={1} mb={2}>
       <HStack p={2}>
-        <VStack>
+        <CheckCircleIcon
+          color={checked ? "green.400" : "gray.300"}
+          alignSelf="center"
+          size="20px"
+          mr={2}
+          position="absolute"
+          left="2"
+        />
+        <VStack pl="30px">
           <Text fontSize="md">{medicine}</Text>
           <Text color="gray.500">{time}</Text>
         </VStack>
 
-        {checked && (
-          <CheckIcon
-            color="green.400"
-            position="absolute"
-            right="3"
-            alignSelf="center"
-            size="sm"
-          />
-        )}
+        <Icon
+          as={Ionicons}
+          name="trash"
+          size="sm"
+          color="red.400"
+          position="absolute"
+          right="3"
+          top="4"
+          onPress={() => {
+            deleteReminder(id);
+          }}
+        />
       </HStack>
     </Box>
   );
@@ -40,25 +58,11 @@ const SingleReminder = ({ medicine, time, checked }) => {
 
 const CurrReminders = ({ setMedicineReminderVisible }) => {
   const [reminders, setReminders] = useState({
-    Morning: [
-      { medicine: "Antibiotics", time: "8:00", checked: true },
-      { medicine: "Vitamin C", time: "8:10", checked: true },
-      {
-        medicine: "High blood pressure medicine",
-        time: "8:20",
-        checked: false,
-      },
-    ],
-    Afternoon: [
-      {
-        medicine: "High blood pressure medicine",
-        time: "13:00",
-        checked: false,
-      },
-      { medicine: "Diabetes medicine", time: "13:10", checked: false },
-    ],
-    Evening: [{ medicine: "Antibiotics", time: "19:00", checked: false }],
+    Morning: [],
+    Afternoon: [],
+    Evening: [],
   });
+
   const [numDoses, setNumDoses] = useState(0);
   const [chosenTime, setChosenTime] = useState({
     0: new Date(),
@@ -67,8 +71,67 @@ const CurrReminders = ({ setMedicineReminderVisible }) => {
   });
   const [medicineToAdd, setMedicineToAdd] = useState("");
 
-  const handleNewReminder = () => {
-    console.log("new reminder");
+  const store = useStore();
+
+  useEffect(async () => {
+    let r = await getAllMedReminders(store.getState().userInfo.elderlyId);
+    let mArr = r.data.data;
+    console.log(mArr);
+    mArr.map(({ medId, medicine, time }) => {
+      time.map((t) => {
+        let timeCat = "";
+        if (parseInt(t.split(":")[0]) < 11) {
+          timeCat = "Morning";
+        } else if (parseInt(t.split(":")[0]) < 17) {
+          timeCat = "Afternoon";
+        } else {
+          timeCat = "Evening";
+        }
+
+        console.log(timeCat, t);
+        setReminders(
+          Object.assign({}, reminders, {
+            [timeCat]: [
+              ...reminders[timeCat],
+              {
+                medicine,
+                time: t,
+                checked: false,
+                id: medId,
+              },
+            ],
+          })
+        );
+      });
+    });
+
+    // setReminders({
+    //   Morning: [
+    //     { medicine: "Antibiotics", time: "8:00", checked: true, id: 1 },
+    //     { medicine: "Vitamin C", time: "8:10", checked: true, id: 2 },
+    //     {
+    //       medicine: "High blood pressure medicine",
+    //       time: "8:20",
+    //       checked: false,
+    //       id: 3,
+    //     },
+    //   ],
+    //   Afternoon: [
+    //     {
+    //       medicine: "High blood pressure medicine",
+    //       time: "13:00",
+    //       checked: false,
+    //       id: 4,
+    //     },
+    //     { medicine: "Diabetes medicine", time: "13:10", checked: false, id: 5 },
+    //   ],
+    //   Evening: [
+    //     { medicine: "Antibiotics", time: "19:00", checked: false, id: 6 },
+    //   ],
+    // });
+  }, []);
+
+  const handleNewReminder = async () => {
     for (let i = 0; i < numDoses; i++) {
       let t = chosenTime[i];
       let timeCat = "";
@@ -80,22 +143,49 @@ const CurrReminders = ({ setMedicineReminderVisible }) => {
         timeCat = "Evening";
       }
 
-      setReminders({
-        ...reminders,
-        [timeCat]: [
-          ...reminders[timeCat],
-          {
-            medicine: "medicine test",
-            time: `${t.getHours()}:${
-              t.getMinutes().toString().length == 1
-                ? "0" + t.getMinutes().toString()
-                : t.getMinutes().toString()
-            }`,
-            checked: false,
-          },
-        ],
-      });
+      let r = await announceReminder(
+        store.getState().userInfo.elderlyId,
+        medicineToAdd,
+        Object.values(chosenTime)
+          .slice(0, numDoses)
+          .map((e) => e.toString().slice(16, 21))
+      );
+
+      if (r.data != "Already exists") {
+        console.log(r, "new data");
+        setReminders({
+          ...reminders,
+          [timeCat]: [
+            ...reminders[timeCat],
+            {
+              medicine: medicineToAdd,
+              time: `${t.getHours()}:${
+                t.getMinutes().toString().length == 1
+                  ? "0" + t.getMinutes().toString()
+                  : t.getMinutes().toString()
+              }`,
+              checked: false,
+              id: r.data,
+            },
+          ],
+        });
+      } else {
+        console.log("This reminder already exists");
+      }
     }
+  };
+
+  const deleteReminder = (id) => {
+    console.log("id", id);
+
+    Object.keys(reminders).map((k) => {
+      if (reminders[k].filter((x) => x.id == id).length > 0) {
+        setReminders({
+          ...reminders,
+          [k]: reminders[k].filter((x) => x.id != id),
+        });
+      }
+    });
   };
 
   return (
@@ -131,27 +221,30 @@ const CurrReminders = ({ setMedicineReminderVisible }) => {
           borderColor="gray.200"
         >
           <ScrollView>
-            {Object.keys(reminders).map((e) => {
-              return (
-                <>
-                  <Text bold fontSize="lg" color="primary.700">
-                    {e}
-                  </Text>
+            {reminders &&
+              Object.keys(reminders).map((e) => {
+                return (
+                  <>
+                    <Text bold fontSize="lg" color="primary.700">
+                      {e}
+                    </Text>
 
-                  <Box>
-                    {reminders[e].map(({ medicine, time, checked }) => {
-                      return (
-                        <SingleReminder
-                          medicine={medicine}
-                          time={time}
-                          checked={checked}
-                        />
-                      );
-                    })}
-                  </Box>
-                </>
-              );
-            })}
+                    <Box>
+                      {reminders[e].map(({ medicine, time, checked, id }) => {
+                        return (
+                          <SingleReminder
+                            medicine={medicine}
+                            time={time}
+                            checked={checked}
+                            id={id}
+                            deleteReminder={deleteReminder}
+                          />
+                        );
+                      })}
+                    </Box>
+                  </>
+                );
+              })}
           </ScrollView>
         </Box>
 

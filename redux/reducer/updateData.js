@@ -31,7 +31,8 @@ const updateCurrLocation = (state, action) => {
 const updateAnomaly = (state, action) => {
   const isToday = (d1) => {
     let d1_date = new Date(`${d1.slice(0, 10)}T${d1.slice(11)}`);
-    return new Date().getTime() - d1_date.getTime() < 24 * 3600 * 1000;
+    console.log(d1_date.getDate());
+    return new Date().getDate() - d1_date.getDate() <= 1;
   };
 
   return {

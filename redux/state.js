@@ -1,10 +1,10 @@
 let initState = {
   login: false,
   userInfo: {
-    name: "Jamie Khua",
-    userId: "201",
-    username: "JamieKhua",
-    elderlyId: "162",
+    name: "Jordan Khua",
+    userId: "266",
+    username: "JordanKhua",
+    elderlyId: "227",
     password: "Nullpassword",
   },
   elderlyInfo: {},

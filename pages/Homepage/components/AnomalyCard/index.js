@@ -72,6 +72,11 @@ const AnomalyCard = ({ data }) => {
                 type="Step Count"
                 infoUrl="https://www.healthline.com/health/fatigue"
               />
+              <AnomalyBlock
+                anomalyData={data.sleepSeconds}
+                type="Sleep"
+                infoUrl="https://www.healthline.com/health/fatigue"
+              />
             </Box>
           </Skeleton.Text>
 

@@ -7,10 +7,8 @@ import {
   FormControl,
   Input,
   Button,
-  HStack,
+  Image,
   Center,
-  Link,
-  View,
 } from "native-base";
 import { connect } from "react-redux";
 
@@ -70,8 +68,24 @@ const LoginArea = (props) => {
   };
 
   return (
-    <>
-      <Box bg="white" shadow={2} w="90%" py="6" px="10">
+    <Box alignContent="center" justifyContent="center" bg="white" shadow={2}>
+      <Image
+        opacity={30}
+        source={require("../../assets/appicongreen.png")}
+        width="350px"
+        height="350px"
+        position="absolute"
+        zIndex={-1}
+        top={0}
+      />
+      <Box
+        w="350px"
+        h="350px"
+        py="6"
+        px="10"
+        zIndex={3}
+        backgroundColor="rgba(255,255,255,0.7)"
+      >
         <Heading
           size="lg"
           fontWeight="600"
@@ -80,7 +94,7 @@ const LoginArea = (props) => {
             color: "warmGray.50",
           }}
         >
-          Welcome 🍓
+          Welcome to Elderberry
         </Heading>
         <Heading
           mt="1"
@@ -132,7 +146,7 @@ const LoginArea = (props) => {
           </Button>
         </VStack>
       </Box>
-    </>
+    </Box>
   );
 };
 
