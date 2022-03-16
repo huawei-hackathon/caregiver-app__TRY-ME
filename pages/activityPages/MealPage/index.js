@@ -96,19 +96,19 @@ const MealPage = () => {
     let routeTmp = [];
     let renderSceneObjTmp = {};
 
-    mealInfo.map(({ time, date, imgUrl }) => {
+    mealInfo.map((obj) => {
+      console.log(obj, "obj");
       routeTmp.push({
-        key: date,
-        title: `${date}-${time}-meal`,
+        key: obj.timestamp,
+        title: `${obj.timestamp}-meal`,
       });
 
-      console.log(imgUrl, "imgurl mealinfo");
-
-      renderSceneObjTmp[date] = () => {
-        console.log(imgUrl, "imgurl");
-        return <OneMealImage imgUrl={imgUrl} />;
+      renderSceneObjTmp[obj.timestamp] = () => {
+        console.log(obj.imgUrl, "imgurl");
+        return <OneMealImage imgUrl={obj.imgUrl} />;
       };
     });
+
     setRoutes(routeTmp);
     setRenderSceneObj(renderSceneObjTmp);
   }, [mealInfo]);
