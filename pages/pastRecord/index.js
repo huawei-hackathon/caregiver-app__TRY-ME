@@ -14,6 +14,7 @@ const ReportWebview = ({ src }) => {
 };
 
 const RecordPageCont = () => {
+  const store = useStore();
   let month = [
     "Jan",
     "Feb",
@@ -32,15 +33,12 @@ const RecordPageCont = () => {
   const [reportUri, setReportUri] = useState("");
   const [codeVisible, setCodeVisible] = useState(false);
 
-  const getUri = () => {
-    // let res = await getReport();
-    // if (res.success) {
-    //   setReportUri(res.data.url);
-    // }
-    // console.log(res, "data");
-    setReportUri(
-      "http://119.13.104.214/getReport/7bdeec7d-4df6-4617-9254-6b2824c59a00"
-    );
+  const getUri = async () => {
+    let res = await getReport(store.getState().userInfo.elderlyId);
+    if (res.success) {
+      setReportUri(res.data);
+      console.log(res.data, "data");
+    }
   };
 
   useEffect(async () => {

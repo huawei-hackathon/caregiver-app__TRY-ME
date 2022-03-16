@@ -324,9 +324,11 @@ const getReport = async (userId) => {
     let res = await axios.post(`${baseUrl}/generateReport`, {
       userId,
     });
+
+    console.log(res.data, "id");
     return {
       success: true,
-      msg: `http://119.13.104.214:80/getReport/${res.data.id}`,
+      data: `http://119.13.104.214:80/getReport/${res.data.id}`,
     };
   } catch (e) {
     console.log("GET REPORT ERR:", e);
