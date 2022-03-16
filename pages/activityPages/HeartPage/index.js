@@ -42,7 +42,6 @@ const TabBar = ({ nav, position, setPos }) => {
                 alignItems="center"
                 justifyContent="center"
                 onPress={() => {
-                  console.log("press", i);
                   setPos(i);
                 }}
               >
@@ -70,7 +69,6 @@ let HeartRatePage = ({ userId, data }) => {
   const [lastUpdateVal, setLastUpdateVal] = useState("");
   const [loading, setLoading] = useState(false);
   const [isErr, setIsErr] = useState(false);
-  console.log(data, "HEARTPAGE DATA");
 
   useEffect(async () => {
     let arr = ["W", "M", "Y"];
@@ -81,7 +79,6 @@ let HeartRatePage = ({ userId, data }) => {
     setLastUpdateVal(data["D"].slice(d.getHours())[0].y);
 
     for (let i = 0; i < arr.length; i++) {
-      console.log(data[arr[i]]);
       if (data[arr[i]].length == 0) {
         heartRateData = await getData(
           "heartRate",

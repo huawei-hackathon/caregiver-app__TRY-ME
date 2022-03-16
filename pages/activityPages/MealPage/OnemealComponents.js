@@ -4,7 +4,6 @@ import { Center, Image, ScrollView, Box, Spinner } from "native-base";
 import ContentList from "../../Homepage/components/FoodCard/ContentList";
 
 const OneMealImage = ({ imgUrl }) => {
-  console.log(imgUrl, "onemeall");
   if (imgUrl) {
     return (
       <Center flex={1}>

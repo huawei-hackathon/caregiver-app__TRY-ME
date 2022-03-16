@@ -16,7 +16,6 @@ import { tryLogin, getUserInfo } from "../../utils";
 
 import { useState } from "react";
 import { valPw, valUsername } from "../../utils/helper";
-import { ErrorModal } from "../../components/errorModal";
 import { StyleSheet } from "react-native";
 
 const LoginArea = (props) => {

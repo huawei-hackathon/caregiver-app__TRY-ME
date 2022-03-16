@@ -1,26 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Text, Box, HStack, Image, Stack, Heading, Spinner } from "native-base";
-import { useStore } from "react-redux";
+import { connect, useStore } from "react-redux";
 
 import ContentList from "./ContentList";
 import { dateToDaysAndTime, getLastmeal } from "../../../../utils";
 
-const FoodCard = () => {
-  const [data, setData] = useState();
-  const store = useStore();
-  const getDataFromServer = async () => {
-    let mealData = await getLastmeal(store.getState().userInfo.elderlyId);
-    if (mealData.success) {
-      setData(mealData.data);
-    }
-  };
-
-  useEffect(() => {
-    setInterval(() => {
-      getDataFromServer();
-    }, 1000);
-  }, []);
-
+const FoodCard = ({ data, refresh }) => {
   return (
     <>
       {data && (
@@ -47,7 +32,7 @@ const FoodCard = () => {
               <Heading size="md">Meal🥗</Heading>
 
               <HStack space={1}>
-                {data && (
+                {data.timestamp && (
                   <Text fontSize="md" color="gray.600" bold>
                     {dateToDaysAndTime(
                       new Date(
@@ -58,12 +43,14 @@ const FoodCard = () => {
                     )}
                   </Text>
                 )}
-                {!data && <Spinner />}
-                {data && !data.mealId && <Text>No meal data found.</Text>}
+                {!data.loaded && <Spinner />}
+                {data.loaded && !data.mealId && (
+                  <Text>No meal data found.</Text>
+                )}
               </HStack>
 
               <HStack width="100%" justifyContent="space-between">
-                {data ? (
+                {data.food ? (
                   <HStack alignItems="center" style={{ position: "relative" }}>
                     <Box shadow={2} w="140" h="140" justifyContent="center">
                       <Image
@@ -87,7 +74,7 @@ const FoodCard = () => {
                             key: i,
                           }))}
                           mealId={data.mealId}
-                          refresh={getDataFromServer}
+                          refresh={refresh}
                         />
                       </Box>
                     </Box>
@@ -104,4 +91,10 @@ const FoodCard = () => {
   );
 };
 
-export default FoodCard;
+const mapStateToProps = (state) => {
+  return {
+    data: state.lastMealData,
+  };
+};
+
+export default connect(mapStateToProps)(FoodCard);

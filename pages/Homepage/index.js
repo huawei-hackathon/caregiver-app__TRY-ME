@@ -71,7 +71,6 @@ let HomePageContent = ({ navigation }) => {
           payload: { data: stepData.data },
         });
       }
-      console.log(stepData);
 
       let locData = await getLocation(store.getState().userInfo.elderlyId);
       if (locData.success) {
@@ -83,31 +82,17 @@ let HomePageContent = ({ navigation }) => {
           },
         });
       }
-    }, 500);
 
-    // let stepData = await getData(
-    //   "stepCount",
-    //   "D",
-    //   store.getState().userInfo.elderlyId
-    // );
-    // if (stepData.success) {
-    //   store.dispatch({
-    //     type: "update/stepData/D",
-    //     payload: { data: stepData.data },
-    //   });
-    // }
-    // console.log(stepData);
-
-    // let locData = await getLocation(store.getState().userInfo.elderlyId);
-    // if (locData.success) {
-    //   store.dispatch({
-    //     type: "update/currentLocation",
-    //     payload: {
-    //       room: locData.data.roomName,
-    //       timeSpent: locData.data.timespent,
-    //     },
-    //   });
-    // }
+      let mealData = await getLastmeal(store.getState().userInfo.elderlyId);
+      if (mealData.success) {
+        store.dispatch({
+          type: "update/lastMealData",
+          payload: {
+            data: { ...mealData.data },
+          },
+        });
+      }
+    }, 1000);
 
     let sleepData = await getData(
       "sleepSeconds",
@@ -231,7 +216,7 @@ let HomePageContent = ({ navigation }) => {
               navigation.navigate("Meals");
             }}
           >
-            <FoodCard />
+            <FoodCard refresh={getAllData} />
           </Pressable>
         </VStack>
       </ScrollView>

@@ -25,7 +25,7 @@ let ChatComponent = ({ chats, userId, updateChat }) => {
   const scrollViewRef = useRef();
 
   useEffect(() => {
-    setInterval(async () => {
+    let chatInterval = setInterval(async () => {
       let res = await getConvo(userId);
       if (res.success) {
         updateChat(res.data);

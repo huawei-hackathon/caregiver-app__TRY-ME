@@ -81,7 +81,6 @@ const MealPage = () => {
 
       setMealInfo(mealInfoTmp);
     } else {
-      console.log(mealsInfo);
       setIsEmpty(true);
     }
 
@@ -97,14 +96,12 @@ const MealPage = () => {
     let renderSceneObjTmp = {};
 
     mealInfo.map((obj) => {
-      console.log(obj, "obj");
       routeTmp.push({
         key: obj.timestamp,
         title: `${obj.timestamp}-meal`,
       });
 
       renderSceneObjTmp[obj.timestamp] = () => {
-        console.log(obj.imgUrl, "imgurl");
         return <OneMealImage imgUrl={obj.imgUrl} />;
       };
     });

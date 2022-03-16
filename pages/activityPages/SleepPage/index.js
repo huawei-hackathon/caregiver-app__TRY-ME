@@ -46,7 +46,6 @@ const TabBar = ({ nav, position, setPos }) => {
                 alignItems="center"
                 justifyContent="center"
                 onPress={() => {
-                  console.log("press", i);
                   setPos(i);
                 }}
               >
@@ -86,7 +85,6 @@ let SleepPage = ({ data, elderlyId }) => {
     let sleepData;
 
     for (let i = 0; i < arr.length; i++) {
-      console.log(data[arr[i]]);
       if (data[arr[i]].length == 0) {
         sleepData = await getData("sleepSeconds", arr[i], elderlyId);
         if (sleepData.success) {

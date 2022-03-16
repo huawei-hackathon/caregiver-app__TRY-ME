@@ -15,7 +15,6 @@ const ChartComponent = ({ chartData, tickValues, theme }) => {
     }
   });
 
-  console.log("chart", chartData, tickValues, theme);
   if (chartData) {
     return (
       <Chart

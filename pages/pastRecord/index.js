@@ -37,7 +37,6 @@ const RecordPageCont = () => {
     let res = await getReport(store.getState().userInfo.elderlyId);
     if (res.success) {
       setReportUri(res.data);
-      console.log(res.data, "data");
     }
   };
 

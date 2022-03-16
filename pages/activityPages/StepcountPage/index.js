@@ -47,7 +47,6 @@ const TabBar = ({ nav, position, setPos }) => {
                 alignItems="center"
                 justifyContent="center"
                 onPress={() => {
-                  console.log("press", i);
                   setPos(i);
                 }}
               >
@@ -83,7 +82,6 @@ let StepcountPage = ({ data }) => {
     setLastUpdate(`Today, ${data["D"].slice(h)[0].x}:00`);
 
     for (let i = 0; i < arr.length; i++) {
-      console.log(data[arr[i]]);
       if (data[arr[i]].length == 0) {
         stepCountData = await getData(
           "stepCount",

@@ -34,14 +34,12 @@ const ChatBubble = ({ chatText, date, isMe, audioFile, soundObject }) => {
           }, time);
         });
       } else {
-        console.log("currently playing");
         soundObject.pauseAsync();
         setIsPlaying(false);
         soundObject.unloadAsync();
       }
       setAudioLoading(false);
     } catch (e) {
-      console.log(e);
       setAudioLoading(false);
     }
   };
@@ -105,31 +103,27 @@ const ChatReplies = ({ chats, soundObject }) => {
 
           return (
             <>
-              {showDate && text != null && (
-                <Center>
-                  <Box
-                    borderRadius={10}
-                    w="120px"
-                    textAlign="center"
-                    bg="gray.200"
-                    mt={4}
-                  >
-                    <Text fontSize="xs" textAlign="center">
-                      {timestamp.slice(0, 10)}
-                    </Text>
-                  </Box>
-                </Center>
-              )}
+              <Center>
+                <Box
+                  borderRadius={10}
+                  w="120px"
+                  textAlign="center"
+                  bg="gray.200"
+                  mt={4}
+                >
+                  <Text fontSize="xs" textAlign="center">
+                    {timestamp.slice(0, 10)}
+                  </Text>
+                </Box>
+              </Center>
 
-              {text != null && (
-                <ChatBubble
-                  date={timestamp.slice(12)}
-                  audioFile={audioLink}
-                  chatText={text}
-                  isMe={author === "caregiver"}
-                  soundObject={soundObject}
-                />
-              )}
+              <ChatBubble
+                date={timestamp.slice(12)}
+                audioFile={audioLink}
+                chatText={text}
+                isMe={author === "caregiver"}
+                soundObject={soundObject}
+              />
             </>
           );
         })
